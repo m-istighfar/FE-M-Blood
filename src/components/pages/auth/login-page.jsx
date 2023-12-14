@@ -48,9 +48,7 @@ const LoginPage = () => {
           </p>
         </div>
 
-        {/* Image Section */}
         <div className="hidden lg:block lg:w-1/2">
-          {/* Update the image path as per your project structure */}
           <img
             src="src/assets/images/bd5.jpg"
             alt="Blood Donation"
