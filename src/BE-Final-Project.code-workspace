@@ -1,0 +1,16 @@
+{
+  "folders": [
+	{
+		"path": "../../BE-Final-Project"
+	},
+	{
+		"path": "../../BE-Final-Webhook"
+	},
+	{
+		"path": ".."
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "BE-Final-Project"
+  }
+}

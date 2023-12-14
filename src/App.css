@@ -1,44 +1,45 @@
 #root {
-    max-width: 1360px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: left;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: left;
 }
 
 .logo {
-    height: 5em; 
-    padding: 1em; 
-    will-change: transform;
-    transition: transform 300ms;
+  height: 5em;
+  padding: 1em;
+  will-change: transform;
+  transition: transform 300ms;
 }
 .logo:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 .logo.react:hover {
-    transform: rotate(-20deg);
+  transform: rotate(-20deg);
 }
 
 @keyframes logo-bounce {
-    0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
-    }
-    50% {
+  }
+  50% {
     transform: translateY(-10px);
-    }
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-    .logo {
+  .logo {
     animation: logo-bounce 2s infinite ease-in-out;
-    }
+  }
 }
 
 .card {
-    padding: 1.5em;
-    border: 1px solid #ccc; 
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); 
+  padding: 1.5em;
+  border: 1px solid #ccc;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .read-the-docs {
-    color: #555;
+  color: #555;
 }
