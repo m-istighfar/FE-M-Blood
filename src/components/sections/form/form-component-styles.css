@@ -1,0 +1,1 @@
+.form-wrapper{background:linear-gradient(to left, rgba(52, 58, 64, 0.8), rgba(33, 37, 41, 0.8)),url("../../../assets/images/BDAbstrak.jpg") center/cover no-repeat;background-blend-mode:overlay;animation:fadeIn 1.5s ease-in-out forwards;transform:translateY(30px);opacity:0}@keyframes fadeIn{to{transform:translateY(0);opacity:1}}/*# sourceMappingURL=form-component-styles.css.map */

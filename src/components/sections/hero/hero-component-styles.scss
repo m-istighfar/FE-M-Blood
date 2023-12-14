@@ -1,0 +1,90 @@
+@keyframes fadeIn {
+    from {
+    opacity: 0;
+    }
+    to {
+    opacity: 1;
+    }
+}
+
+.hero {
+    background: url("../../../assets/images/bd1.jpg") no-repeat center / cover;
+}
+
+.home-page-hero {
+    background: url("../../../assets/images/bd7.jpeg") no-repeat center / cover;
+    font-size: 2rem;
+    font-weight: bold;
+    animation: fadeup 1s ease-in-out forwards;
+}
+
+.donate-blood-page-hero {
+    background:  url("../../../assets/images/bd7.jpeg") no-repeat center / cover;
+}
+
+.host-blood-drive-page-hero {
+    background:  url("../../../assets/images/bd3.jpg") no-repeat center / cover;
+}
+
+.need-blood-page-hero {
+    background: url("../../../assets/images/bd3.jpg") no-repeat center / cover;
+}
+
+.contact-page-hero {
+    background:  url("../../../assets/images/bd3.jpg") no-repeat center / cover;
+}
+
+.hero h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero a, .hero button {
+    transition: transform 0.3s ease-in-out;
+}
+
+.hero a:hover, .hero button:hover {
+    transform: scale(1.05);
+}
+.main-wrapper {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 85vh;
+    position: relative;
+    background-size: cover;
+}
+.main-wrapper::before {
+        content: "";
+        position: absolute;
+        inset: 0; 
+        z-index: 0;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    position: relative;
+    margin: 0 auto;
+    width: min(100% - 40px, 1200px); 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+    border-radius: 8px;
+    background: white;
+    z-index: 1; 
+
+    animation: fadeup 1s ease-in-out forwards;
+	transform: translateY(50px);
+	opacity: 0;
+}
+
+
+
+
+
+.home-page-hero-animated {
+    animation: fadeIn 1s ease-in-out;
+}
