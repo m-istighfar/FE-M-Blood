@@ -3,6 +3,7 @@ import HomePage from "./components/pages/home/home-page";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/pages/auth/login-page";
 import RegisterPage from "./components/pages/auth/register-page";
+import ForgotPasswordPage from "./components/pages/auth/forgot-password";
 import DonateBloodPage from "./components/pages/donate-blood/donate-blood-page";
 import HostBloodDrivePage from "./components/pages/host-blood-drive/host-blood-drive";
 import NeedBloodPage from "./components/pages/need-blood/need-blood-page";
@@ -23,6 +24,8 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
         <Route exact path="/" element={<HomePage />} />
         <Route path="/host-blood-drive" element={<HostBloodDrivePage />} />
         <Route path="/donate-blood" element={<DonateBloodPage />} />
