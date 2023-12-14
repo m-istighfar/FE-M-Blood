@@ -1,3 +1,6 @@
+import React from "react";
+import "tailwindcss/tailwind.css";
+
 const LoginPage = () => {
   return (
     <main className="bg-off_white min-h-screen flex items-center justify-center p-8 md:p-0">
@@ -30,6 +33,12 @@ const LoginPage = () => {
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 border-2 border-gray rounded-rsm focus:outline-none focus:border-dark_red"
               />
+              <a
+                href="/forgot-password"
+                className="text-sm text-dark_red hover:underline mt-2 inline-block"
+              >
+                Forgot password?
+              </a>
             </div>
 
             <button
@@ -50,7 +59,7 @@ const LoginPage = () => {
 
         <div className="hidden lg:block lg:w-1/2">
           <img
-            src="src/assets/images/bd5.jpg"
+            src="src/assets/images/bd5.jpg" // Make sure to use a relevant blood donation image
             alt="Blood Donation"
             className="object-cover w-full h-full"
           />
