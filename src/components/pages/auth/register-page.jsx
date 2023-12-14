@@ -1,68 +1,98 @@
 const RegisterPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6">
-          <div className="rounded-md shadow-sm">
+    <main className="bg-off_white min-h-screen flex items-center justify-center p-8 md:p-0">
+      <div className="bg-white shadow-lg flex flex-col items-center rounded-rmd overflow-hidden lg:flex-row lg:w-2/3 2xl:w-1/2">
+        <div className="lg:w-1/2 p-8 sm:p-8">
+          <h1 className="font-bold text-red text-3xl md:text-4xl md:mb-16">
+            Join us in saving lives.
+          </h1>
+
+          <form className="flex flex-col space-y-4 mt-8">
             <div>
-              <label htmlFor="name" className="sr-only">
-                Full Name
+              <label htmlFor="username" className="block mb-2 text-dark_gray">
+                Username
               </label>
               <input
-                id="name"
-                name="name"
+                id="username"
                 type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Full Name"
+                placeholder="Choose a username"
+                className="w-full px-4 py-2 border-2 border-gray rounded-rsm focus:border-dark_red focus:outline-none"
               />
             </div>
-            <div className="mt-2">
-              <label htmlFor="email-address" className="sr-only">
-                Email address
+
+            <div>
+              <label htmlFor="email" className="block mb-2 text-dark_gray">
+                Email Address
               </label>
               <input
-                id="email-address"
-                name="email"
+                id="email"
                 type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder="youremail@example.com"
+                className="w-full px-4 py-2 border-2 border-gray rounded-rsm focus:border-dark_red focus:outline-none"
               />
             </div>
-            <div className="mt-2">
-              <label htmlFor="password" className="sr-only">
+
+            <div>
+              <label htmlFor="password" className="block mb-2 text-dark_gray">
                 Password
               </label>
               <input
                 id="password"
-                name="password"
                 type="password"
-                autoComplete="new-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="Create a password"
+                className="w-full px-4 py-2 border-2 border-gray rounded-rsm focus:border-dark_red focus:outline-none"
               />
             </div>
-          </div>
 
-          <div>
+            <div>
+              <label htmlFor="name" className="block mb-2 text-dark_gray">
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                className="w-full px-4 py-2 border-2 border-gray rounded-rsm focus:border-dark_red focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="block mb-2 text-dark_gray">
+                Phone Number
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                placeholder="+1234567890"
+                className="w-full px-4 py-2 border-2 border-gray rounded-rsm focus:border-dark_red focus:outline-none"
+              />
+            </div>
+
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="bg-dark_red hover:bg-red text-white font-medium text-lg px-4 py-2 rounded-rsm transition-colors duration-200"
             >
               Register
             </button>
-          </div>
-        </form>
+          </form>
+
+          <p className="mt-6 text-gray">
+            Already have an account?{" "}
+            <a href="/login" className="text-dark_red font-semibold underline">
+              Sign in
+            </a>
+          </p>
+        </div>
+
+        <div className="hidden lg:block lg:w-1/2">
+          <img
+            src="src/assets/images/bd5.jpg"
+            alt="Join our community"
+            className="object-cover w-full h-full"
+          />
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 

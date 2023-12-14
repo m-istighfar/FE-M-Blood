@@ -1,6 +1,3 @@
-import React from "react";
-import "tailwindcss/tailwind.css";
-
 const LoginPage = () => {
   return (
     <main className="bg-off_white min-h-screen flex items-center justify-center p-8 md:p-0">
@@ -51,7 +48,10 @@ const LoginPage = () => {
 
           <p className="mt-6 text-gray">
             New here?{" "}
-            <a href="/signup" className="text-dark_red font-semibold underline">
+            <a
+              href="/register"
+              className="text-dark_red font-semibold underline"
+            >
               Create an account
             </a>
           </p>
