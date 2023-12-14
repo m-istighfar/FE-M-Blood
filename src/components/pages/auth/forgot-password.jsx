@@ -17,8 +17,8 @@ const ForgotPasswordPage = () => {
             Forgot your password?
           </h1>
           <p className="mb-8">
-            Enter your email address below and we'll send you a link to reset
-            your password.
+            Enter your email address below and we&apos;ll send you a link to
+            reset your password.
           </p>
           <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <div>
