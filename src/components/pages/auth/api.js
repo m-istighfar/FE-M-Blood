@@ -41,3 +41,19 @@ export const loginUser = async (credentials) => {
     throw error;
   }
 };
+
+export const requestPasswordReset = async (emailData) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/auth/request-password-reset",
+      emailData,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error requesting password reset:", error);
+    throw error;
+  }
+};

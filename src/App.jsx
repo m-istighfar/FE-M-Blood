@@ -3,7 +3,7 @@ import HomePage from "./components/pages/home/home-page";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/pages/auth/login-page/login-page";
 import RegisterPage from "./components/pages/auth/register-page";
-import ForgotPasswordPage from "./components/pages/auth/forgot-password";
+import ForgotPasswordPage from "./components/pages/auth/forgot-password/forgot-password";
 import ResetPasswordConfirmationPage from "./components/pages/auth/reset-password-confirmation";
 import CreateNewPasswordPage from "./components/pages/auth/create-new-password";
 import NewPasswordSetConfirmationPage from "./components/pages/auth/new-password-set-confirmation";
