@@ -5,7 +5,7 @@ import LoginPage from "./components/pages/auth/login-page/login-page";
 import RegisterPage from "./components/pages/auth/register-page";
 import ForgotPasswordPage from "./components/pages/auth/forgot-password/forgot-password";
 import ResetPasswordConfirmationPage from "./components/pages/auth/reset-password-confirmation";
-import CreateNewPasswordPage from "./components/pages/auth/create-new-password";
+import CreateNewPasswordPage from "./components/pages/auth/create-new-password/create-new-password";
 import NewPasswordSetConfirmationPage from "./components/pages/auth/new-password-set-confirmation";
 import DonateBloodPage from "./components/pages/donate-blood/donate-blood-page";
 import HostBloodDrivePage from "./components/pages/host-blood-drive/host-blood-drive";
@@ -33,7 +33,7 @@ export default function App() {
           element={<ResetPasswordConfirmationPage />}
         />
         <Route
-          path="/create-new-password"
+          path="/reset-password/:resetToken"
           element={<CreateNewPasswordPage />}
         />
         <Route

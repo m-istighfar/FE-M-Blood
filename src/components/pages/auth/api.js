@@ -57,3 +57,19 @@ export const requestPasswordReset = async (emailData) => {
     throw error;
   }
 };
+
+export const resetPassword = async (resetToken, newPasswordData) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/auth/reset-password/${resetToken}`,
+      newPasswordData,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    throw error;
+  }
+};
