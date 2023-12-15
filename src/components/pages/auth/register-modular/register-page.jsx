@@ -4,7 +4,7 @@ import { Dialog, Listbox } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
 import "tailwindcss/tailwind.css";
 
-import { fetchProvinces, registerUser } from "./api";
+import { fetchProvinces, registerUser } from "../api";
 
 const RegisterPage = () => {
   const [provinces, setProvinces] = useState([]);

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import HomePage from "./components/pages/home/home-page";
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./components/pages/auth/login-page";
+import LoginPage from "./components/pages/auth/login-page/login-page";
 import RegisterPage from "./components/pages/auth/register-page";
 import ForgotPasswordPage from "./components/pages/auth/forgot-password";
 import ResetPasswordConfirmationPage from "./components/pages/auth/reset-password-confirmation";

@@ -25,3 +25,19 @@ export const registerUser = async (userData) => {
     throw error;
   }
 };
+
+export const loginUser = async (credentials) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/auth/login",
+      credentials,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error during login:", error);
+    throw error;
+  }
+};
