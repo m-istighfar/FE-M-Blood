@@ -58,11 +58,18 @@ export const requestPasswordReset = async (emailData) => {
   }
 };
 
-export const resetPassword = async (resetToken, newPasswordData) => {
+export const resetPassword = async (
+  resetToken,
+  newPassword,
+  confirmPassword
+) => {
   try {
     const response = await axios.post(
       `http://localhost:3000/auth/reset-password/${resetToken}`,
-      newPasswordData,
+      {
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      },
       {
         headers: { "Content-Type": "application/json" },
       }

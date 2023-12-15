@@ -17,6 +17,7 @@ const CreateNewPasswordPage = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -31,7 +32,7 @@ const CreateNewPasswordPage = () => {
     }
 
     try {
-      await resetPassword(resetToken, { newPassword: data.newPassword });
+      await resetPassword(resetToken, data.newPassword, data.confirmPassword);
       setModalState({
         isOpen: true,
         type: "success",
@@ -96,6 +97,9 @@ const CreateNewPasswordPage = () => {
                 type="password"
                 {...register("confirmPassword", {
                   required: "Please confirm your new password",
+                  validate: (value) =>
+                    value === watch("newPassword") ||
+                    "The passwords do not match",
                 })}
                 placeholder="Confirm new password"
                 className="w-full px-4 py-2 border-2 border-gray rounded-rsm focus:border-dark_red focus:outline-none"
