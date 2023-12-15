@@ -14,11 +14,11 @@ import newUsersInsertRequest from "../../utility-functions/new-users-insert-requ
 
 const ContactPage = () => {
 	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		phone: "",
+		bloodType: "",
+		isWillingToDonate: "",
+		canHelpInEmergency: "",
 		reason: "",
-		message: "",
+		province: "",
 	});
 
 	const handleSubmit = (e) => {
@@ -26,12 +26,12 @@ const ContactPage = () => {
 
 		console.log(formData);
 
-		Axios.post("http://localhost:3001/create-need-help", {
-			name: formData.name,
-			email: formData.email,
-			phone: formData.phone,
+		Axios.post("http://localhost:3000/help-offer/offer", {
+			bloodType: formData.bloodType,
+			isWillingToDonate: formData.isWillingToDonate,
+			canHelpInEmergency: formData.canHelpInEmergency,
 			reason: formData.reason,
-			message: formData.message,
+			location: formData.location,
 		})
 			.then((response) => {
 				console.log("success");
@@ -44,11 +44,11 @@ const ContactPage = () => {
 		newUsersInsertRequest(formData, "need-help");
 
 		setFormData({
-			name: "",
-			email: "",
-			phone: "",
-			reason: "",
-			message: "",
+		bloodType: "",
+		isWillingToDonate: "",
+		canHelpInEmergency: "",
+		reason: "",
+		province: "",
 		});
 	};
 
@@ -62,24 +62,38 @@ const ContactPage = () => {
 
 	const fields = [
 		{
-			key: "name",
-			name: "name",
-			type: "text",
-			placeholder: "Name",
+			key: "bloodType",
+			name: "bloodType",
+			type: "select",
+			options: [
+				{ value: "A", label: "A" },
+				{ value: "B", label: "B" },
+				{ value: "AB", label: "AB" },
+				{ value: "O", label: "O" },
+			],
+			placeholder: "Blood Type",
 			required: true,
 		},
 		{
-			key: "email",
-			name: "email",
-			type: "email",
-			placeholder: "Email",
+			key: "isWillingToDonate",
+			name: "isWillingToDonate",
+			type: "select",
+			options: [
+				{ value: "yes", label: "Yes" },
+				{ value: "no", label: "No" },
+			],
+			placeholder: "Are you willing to donate?",
 			required: true,
 		},
 		{
-			key: "phone",
-			name: "phone",
-			type: "tel",
-			placeholder: "Phone",
+			key: "canHelpInEmergency",
+			name: "canHelpInEmergency",
+			type: "select",
+			options: [
+				{ value: "yes", label: "Yes" },
+				{ value: "no", label: "No" },
+			],
+			placeholder: "Can you help in an emergency?",
 			required: true,
 		},
 		{
@@ -88,6 +102,18 @@ const ContactPage = () => {
 			type: "text",
 			placeholder: "Reason",
 			required: false,
+		},
+		{
+			key: "province",
+			name: "province",
+			type: "select",
+			options: [
+				{ value: "province1", label: "Province 1" },
+				{ value: "province2", label: "Province 2" },
+				{ value: "province3", label: "Province 3" },
+			],
+			placeholder: "Province",
+			required: true,
 		},
 	];
 

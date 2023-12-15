@@ -20,10 +20,10 @@ const SideBySideComponent = ({
         <WrapperSection>
             <div className="side-by-side-wrapper grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div
-                    className={`image-col bg-cover bg-center rounded-lg shadow-lg w-full ${classHint}`}
+                    className={`image-col bg-cover bg-center rounded-rlg shadow-lg w-full ${classHint}`}
                     style={{ backgroundImage: `url(${imageUrl})`, height: '100%' }}
                 ></div>
-                <div className="content-col bg-white p-6 md:p-10 rounded-lg shadow-lg flex flex-col justify-center">
+                <div className="content-col bg-white p-6 md:p-10 rounded-rlg shadow-lg flex flex-col justify-center">
                     <GroupedHeadingComponent
                         subheadingText={subheadingText}
                         headingText={headingText}

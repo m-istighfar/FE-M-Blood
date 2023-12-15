@@ -29,7 +29,7 @@ const FilterableComponent = ({
 								name={item.value}
 								value={item.value}
 								checked={selectedOpt === item.value}
-								className="ml-2 mr-2 border-2 px-4 py-2 rounded-md focus:outline-none focus:border-blue-500"
+								className="ml-2 mr-2 border-2 px-4 py-2 rounded-rmd focus:outline-none focus:border-blue-500"
 								onChange={handleInputChange}
 							/>
 							<span className="ml-2 mr-2 text-sm">

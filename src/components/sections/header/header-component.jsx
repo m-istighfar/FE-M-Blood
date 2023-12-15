@@ -62,7 +62,7 @@ const HeaderComponent = () => {
                 <div className="flex lg:hidden">
 					<button
 						type="button"
-						className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-off_white"
+						className="-m-2.5 inline-flex items-center justify-center rounded-rmd p-2.5 text-off_white"
 						onClick={() => setMobileMenuOpen(true)}
 					>
 						<span className="sr-only">Open main menu</span>
@@ -114,7 +114,7 @@ const HeaderComponent = () => {
 						</a>
 						<button
 							type="button"
-							className="-m-2.5 rounded-md p-2.5 text-blue-900"
+							className="-m-2.5 rounded-rmd p-2.5 text-blue-900"
 							onClick={() => setMobileMenuOpen(false)}
 						>
 							<span className="sr-only">Close menu</span>
@@ -132,7 +132,7 @@ const HeaderComponent = () => {
 											setMobileMenuOpen(false);
 										}}
 										to={item.href}
-										className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-blue-900 hover:bg-dark rounded-rsm ${
+										className={`-mx-3 block px-3 py-2 text-base font-semibold leading-7 text-blue-900 hover:bg-dark rounded-rsm ${
 											item.secondLast &&
 											`rounded-rsm border border-dark/[.5] hover:bg-blue hover:text-dark`
 										} ${

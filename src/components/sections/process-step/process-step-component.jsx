@@ -8,7 +8,7 @@ const ProcessStepComponent = ({
     stepUrl,
 }) => {
     return (
-        <a href={stepUrl} className="process-step flex flex-col items-center p-4 hover:bg-blue-100 rounded-lg transition-all duration-300" key={stepNumber}>
+        <a href={stepUrl} className="process-step flex flex-col items-center p-4 hover:bg-blue-100 rounded-rlg transition-all duration-300" key={stepNumber}>
             <div className="step-number-wrapper w-[60px] h-[60px] bg-blue-500 rounded-full flex justify-center items-center mb-4">
             <span className="step-number font-bold text-[24px] text-gray-700">
                 {stepNumber}

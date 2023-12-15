@@ -16,11 +16,8 @@ import Axios from "axios";
 
 const DonateBloodPage = () => {
 	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		phone: "",
 		bloodType: "",
-		message: "",
+		scheduledDate: "",
 	});
 
 	const handleSubmit = (e) => {
@@ -28,12 +25,9 @@ const DonateBloodPage = () => {
 
 		console.log("success");
 
-		Axios.post("http://localhost:3001/create-donate-blood", {
-			name: formData.name,
-			email: formData.email,
-			phone: formData.phone,
+		Axios.post("http://localhost:3000/appointments/create", {
 			bloodType: formData.bloodType,
-			message: formData.message,
+			scheduledDate: formData.scheduledDate,
 		})
 			.then((response) => {
 				console.log("success");
@@ -46,11 +40,8 @@ const DonateBloodPage = () => {
 		newUsersInsertRequest(formData, "donate-blood");
 
 		setFormData({
-			name: "",
-			email: "",
-			phone: "",
 			bloodType: "",
-			message: "",
+			scheduledDate: "",
 		});
 	};
 
@@ -128,31 +119,23 @@ const DonateBloodPage = () => {
 
 	const fields = [
 		{
-			key: "name",
-			name: "name",
-			type: "text",
-			placeholder: "Name",
-			required: true,
-		},
-		{
-			key: "email",
-			name: "email",
-			type: "email",
-			placeholder: "Email",
-			required: true,
-		},
-		{
-			key: "phone",
-			name: "phone",
-			type: "text",
-			placeholder: "Phone",
-			required: true,
-		},
-		{
 			key: "bloodType",
 			name: "bloodType",
-			type: "text",
-			placeholder: "Blood Type",
+			type: "select",
+			options: [
+				{ value: "A", label: "A" },
+				{ value: "B", label: "B" },
+				{ value: "AB", label: "AB" },
+				{ value: "O", label: "O" },
+				],
+			placeholder: "Select Blood Type",
+			required: true,
+		},
+		{
+			key: "scheduledDate",
+			name: "scheduledDate",
+			type: "date", 
+			placeholder: "Scheduled Date",
 			required: true,
 		},
 	];

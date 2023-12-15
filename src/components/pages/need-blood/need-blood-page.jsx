@@ -14,11 +14,8 @@ import newUsersInsertRequest from "../../utility-functions/new-users-insert-requ
 
 const NeedBloodPage = () => {
 	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		phone: "",
 		bloodType: "",
-		message: "",
+		additionalInfo:""
 	});
 
 	const handleSubmit = (e) => {
@@ -27,11 +24,8 @@ const NeedBloodPage = () => {
 		console.log(formData);
 
 		Axios.post("http://localhost:3001/create-need-blood", {
-			name: formData.name,
-			email: formData.email,
-			phone: formData.phone,
 			bloodType: formData.bloodType,
-			message: formData.message,
+			additionalInfo: formData.additionalInfo,
 		})
 			.then((response) => {
 				console.log("success");
@@ -44,11 +38,8 @@ const NeedBloodPage = () => {
 		newUsersInsertRequest(formData, "need-blood");
 
 		setFormData({
-			name: "",
-			email: "",
-			phone: "",
-			bloodType: "",
-			message: "",
+		bloodType: "",
+		additionalInfo:""
 		});
 	};
 
@@ -119,31 +110,23 @@ const NeedBloodPage = () => {
 
 	const fields = [
 		{
-			key: "name",
-			name: "name",
-			type: "text",
-			placeholder: "Name",
-			required: true,
-		},
-		{
-			key: "email",
-			name: "email",
-			type: "email",
-			placeholder: "Email",
-			required: true,
-		},
-		{
-			key: "phone",
-			name: "phone",
-			type: "tel",
-			placeholder: "Phone",
-			required: true,
-		},
-		{
-			key: "bloodType",
+			key: "bloodType", 
 			name: "bloodType",
+			type: "select", 
+			options: [
+				{ value: "A", label: "A" },
+				{ value: "B", label: "B" },
+				{ value: "AB", label: "AB" },
+				{ value: "O", label: "O" },
+			],
+			placeholder: "Select Blood Type",
+			required: true,
+		},
+		{
+			key: "additionalInfo",
+			name: "additionalInfo",
 			type: "text",
-			placeholder: "Blood Type",
+			placeholder: "Additional Info",
 			required: false,
 		},
 	];
@@ -155,7 +138,7 @@ const NeedBloodPage = () => {
 			<HeroComponent {...NeedBloodPageDetails.hero} />
 			<FormComponent
 				fields={fields}
-				heading={"Request for emergency blood"}
+				heading={"Request For Emergency Blood"}
 				buttonText={"Request blood"}
 				handleSubmit={handleSubmit}
 				formData={formData}
