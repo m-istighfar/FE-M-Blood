@@ -61,7 +61,7 @@ const FooterComponent = () => {
                     <h2 className="text-4xl font-bold mb-3">
                         M<span className="text-red-500">Blood</span>
                     </h2>
-                    <p className="text-gray-400">
+                    <p className="text-dark">
                         You don't have to be a doctor to save a life: Just donate blood
                     </p>
                 </div>
@@ -97,7 +97,7 @@ const FooterComponent = () => {
                 </div>
             </div>
 
-            <div className="footer-bottom text-center border-t border-gray-700 mt-8 pt-6">
+            <div className="footer-bottom text-center border-t border-gray mt-8 pt-6">
                 <p>
                     ©️ 2023 M Blood - Website design by{"Restu WP & M Istigfar "}
                     <a href="linkedin.com/in/restu-windri-pangestu-590849257" className="underline hover:text-red-500" target="_blank" rel="noreferrer">

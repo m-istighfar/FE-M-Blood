@@ -26,7 +26,7 @@ const SearchBloodStockComponent = ({
 						<select
 							name="bloodGroup"
 							id="bloodGroup"
-							className="w-full border sm:col-span-4 border-none bg-[#D9D9D9] rounded-rmd p-2 focus:outline-none focus:ring-2 focus:ring-gray-200"
+							className="w-full border sm:col-span-4 border-none bg-[#D9D9D9] rounded-rmd p-2 focus:outline-none focus:ring-2 focus:ring-gray"
 							onChange={(e) => setBloodGroup(e.target.value)}
 							value={bloodGroup}
 						>

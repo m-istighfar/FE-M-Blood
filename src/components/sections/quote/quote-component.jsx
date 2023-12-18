@@ -14,7 +14,7 @@ const QuoteComponent = ({
     return (
         <WrapperSection>
             <div className={`quote-container relative p-8 md:p-16 grid place-items-center w-full rounded-rlg shadow-md bg-gradient-to-r from-indigo-500 to-purple-500 ${classHint}`}>
-            <blockquote className="w-full md:w-[90%] lg:w-[75%] text-lg md:text-xl lg:text-2xl text-center font-semibold text-gray-700 bg-white/70 backdrop-blur-sm p-6 rounded-rlg shadow-sm">
+            <blockquote className="w-full md:w-[90%] lg:w-[75%] text-lg md:text-xl lg:text-2xl text-center font-semibold text-dark bg-white/70 backdrop-blur-sm p-6 rounded-rlg shadow-sm">
                 <span className="block mb-4 italic">&ldquo;{quoteText}&rdquo;</span>
                 {buttonHave && (
                     <ButtonComponent

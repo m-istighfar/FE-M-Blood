@@ -14,7 +14,7 @@ const FilterableComponent = ({
 					placeholder="Search"
 					value={filter}
 					onChange={handleSearchChange}
-					className="border-2 px-4 py-2 rounded-rsm placeholder:text-dark shadow-sm border-none outline-none bg-[#ddd]  focus:outline-none focus:border-blue-500"
+					className="border-2 px-4 py-2 rounded-rsm placeholder:text-dark shadow-sm border-none outline-none bg-[#ddd]  focus:outline-none focus:border-blue"
 				/>
 			</div>
 			<div className="flex flex-row space-x-2">
@@ -29,7 +29,7 @@ const FilterableComponent = ({
 								name={item.value}
 								value={item.value}
 								checked={selectedOpt === item.value}
-								className="ml-2 mr-2 border-2 px-4 py-2 rounded-rmd focus:outline-none focus:border-blue-500"
+								className="ml-2 mr-2 border-2 px-4 py-2 rounded-rmd focus:outline-none focus:border-blue"
 								onChange={handleInputChange}
 							/>
 							<span className="ml-2 mr-2 text-sm">

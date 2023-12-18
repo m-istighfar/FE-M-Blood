@@ -1,18 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HeroComponent from "../../sections/hero/hero-component";
 import FormComponent from "../../sections/form/form-component";
 import ContactDetailsComponent from "../../sections/details/details-component";
 import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
+import { useForm } from "react-hook-form";
 
-import Axios from "axios";
+import axios from "axios";
 
 import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const ContactPage = () => {
+
+	const [provinces, setProvinces] = useState([]);
+	const [selectedProvince, setSelectedProvince] = useState(null);
+	const [bloodTypes, setBloodTypes] = useState([]);
+	const [selectedBlood, setSelectedBlood] = useState(null);
+
+	const { setValue } = useForm();
+
 	const [formData, setFormData] = useState({
 		bloodType: "",
 		isWillingToDonate: "",
@@ -21,12 +30,48 @@ const ContactPage = () => {
 		province: "",
 	});
 
+	useEffect(() => {
+		const fetchProvinces = async () => {
+			try {
+				const response = await axios.get("http://localhost:3000/province");
+				setProvinces(response.data.data);
+				setSelectedProvince(response.data.data[0]);
+			} catch (error) {
+				console.error("Error fetching provinces:", error);
+			}
+		};
+		
+			fetchProvinces();
+		}, []);
+
+		useEffect(() => {
+			setValue("provinceId", selectedProvince?.ProvinceID);
+		}, [selectedProvince, setValue]);
+
+		useEffect(() => {
+			const fetchBlood = async () => {
+				try {
+					const response = await axios.get("http://localhost:3000/blood-type");
+					setBloodTypes(response.data.data);
+					setSelectedBlood(response.data.data[0]);
+				} catch (error) {
+					console.error("Error fetching blood:", error);
+				}
+			};
+			
+				fetchBlood();
+			}, []);
+	
+			useEffect(() => {
+				setValue("BloodTypeID", selectedBlood?.BloodTypeID);
+			}, [selectedBlood, setValue]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		console.log(formData);
 
-		Axios.post("http://localhost:3000/help-offer/offer", {
+		axios.post("http://localhost:3000/help-offer/offer", {
 			bloodType: formData.bloodType,
 			isWillingToDonate: formData.isWillingToDonate,
 			canHelpInEmergency: formData.canHelpInEmergency,
@@ -65,12 +110,10 @@ const ContactPage = () => {
 			key: "bloodType",
 			name: "bloodType",
 			type: "select",
-			options: [
-				{ value: "A", label: "A" },
-				{ value: "B", label: "B" },
-				{ value: "AB", label: "AB" },
-				{ value: "O", label: "O" },
-			],
+			options: bloodTypes.map((bloodType) => ({
+			value: bloodType.BloodID,
+			label: bloodType.Type,
+			})),
 			placeholder: "Blood Type",
 			required: true,
 		},
@@ -107,11 +150,10 @@ const ContactPage = () => {
 			key: "province",
 			name: "province",
 			type: "select",
-			options: [
-				{ value: "province1", label: "Province 1" },
-				{ value: "province2", label: "Province 2" },
-				{ value: "province3", label: "Province 3" },
-			],
+			options: provinces.map((province) => ({
+			value: province.ProvinceID,
+			label: province.Name
+			})),
 			placeholder: "Province",
 			required: true,
 		},

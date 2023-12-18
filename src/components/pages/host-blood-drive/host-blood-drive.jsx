@@ -7,14 +7,18 @@ import FormComponent from "../../sections/form/form-component";
 import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
+import { useForm } from "react-hook-form";
 
-import Axios from "axios";
+
+import axios from "axios";
 import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const HostBloodDrivePage = () => {
 
 	const [provinces, setProvinces] = useState([]);
-  	const [selectedProvince, setSelectedProvince] = useState(null);
+	const [selectedProvince, setSelectedProvince] = useState(null);
+
+	const { setValue } = useForm();
 
 	const [formData, setFormData] = useState({
 		institute: "",
@@ -32,23 +36,23 @@ const HostBloodDrivePage = () => {
 			} catch (error) {
 				console.error("Error fetching provinces:", error);
 			}
-			};
+		};
 		
 			fetchProvinces();
 		}, []);
 
-	useEffect(() => {
-		setValue("provinceId", selectedProvince?.ProvinceID);
-	}, [selectedProvince, setValue]);
+		useEffect(() => {
+			setValue("provinceId", selectedProvince?.ProvinceID);
+		}, [selectedProvince, setValue]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		console.log(formData);
 
-		Axios.post("http://localhost:3000/blood-drive/create", {
+		axios.post("http://localhost:3000/blood-drive/create", {
 			institute: formData.institute,
-			province:formData.province,
+			province: selectedProvince?.ProvinceID,
 			designation: formData.designation,
 			schedule: formData.schedule
 		})
@@ -83,9 +87,6 @@ const HostBloodDrivePage = () => {
 			By providing a convenient location for people to donate, you can help ensure that there is a steady supply of blood for those in need.
 			Blood drives also provide an opportunity for team building and community involvement, and can boost morale and engagement among employees or group members.`,
 			imageUrl: "../../../assets/images/blood-donation(1).jpg",
-			buttonText: "Host Now",
-			buttonLink: "/host-blood-drive",
-			buttonHave: true,
 		},
 
 		hosting_blood_drive: {
@@ -96,14 +97,11 @@ const HostBloodDrivePage = () => {
 			Make sure you have enough volunteers to help with registration, refreshments, and donor follow-up.
 			Provide a comfortable and welcoming environment for donors, and ensure that all equipment is properly sanitized and maintained.`,
 			imageUrl: "../../../assets/images/blood-donation(1).jpg",
-			buttonText: "Host Now",
-			buttonLink: "/host-blood-drive",
-			buttonHave: true,
 		},
 
 		hero: {
-			subheadingText: "Join us to save lives",
-			headingText: "Host a Blood Drive to save lives with us",
+			subheadingText: "Join Us to Save Lives",
+			headingText: "Host a Blood Drive to Save Lives With Us",
 			classHint: "host-blood-drive-page-hero",
 		},
 		stepsText: {
@@ -147,11 +145,10 @@ const HostBloodDrivePage = () => {
 			key: "province",
 			name: "province",
 			type: "select",
-			options: [
-				{ value: "province1", label: "Province 1" },
-				{ value: "province2", label: "Province 2" },
-				{ value: "province3", label: "Province 3" },
-			],
+			options: provinces.map((province) => ({
+			value: province.ProvinceID,
+			label: province.Name
+			})),
 			placeholder: "Province",
 			required: true,
 		},

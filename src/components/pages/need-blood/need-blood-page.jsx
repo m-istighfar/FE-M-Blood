@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HeroComponent from "../../sections/hero/hero-component";
 import ThreeStepProcessComponent from "../../sections/three-step-process/three-step-process-component";
 import QuoteComponent from "../../sections/quote/quote-component";
@@ -8,22 +8,46 @@ import SearchBloodStockComponent from "../../sections/search-blood-stock/search-
 import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
+import { useForm } from "react-hook-form";
 
-import Axios from "axios";
+import axios from "axios";
 import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const NeedBloodPage = () => {
+	const [bloodTypes, setBloodTypes] = useState([]);
+	const [selectedBlood, setSelectedBlood] = useState(null);
+
+	const { setValue } = useForm();
+
 	const [formData, setFormData] = useState({
 		bloodType: "",
 		additionalInfo:""
 	});
+
+	useEffect(() => {
+		const fetchBlood = async () => {
+			try {
+				const response = await axios.get("http://localhost:3000/blood-type");
+				setBloodTypes(response.data.data);
+				setSelectedBlood(response.data.data[0]);
+			} catch (error) {
+				console.error("Error fetching blood:", error);
+			}
+		};
+		
+			fetchBlood();
+		}, []);
+
+		useEffect(() => {
+			setValue("BloodTypeID", selectedBlood?.BloodTypeID);
+		}, [selectedBlood, setValue]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		console.log(formData);
 
-		Axios.post("http://localhost:3001/create-need-blood", {
+		axios.post("http://localhost:3001/create-need-blood", {
 			bloodType: formData.bloodType,
 			additionalInfo: formData.additionalInfo,
 		})
@@ -48,9 +72,6 @@ const NeedBloodPage = () => {
 			classHint: "quote need-blood-quote",
 			quoteText: `Facing a blood emergency?\n 
             Request a callback and let us help you!`,
-			buttonText: "Call Now",
-			buttonLink: "tel:+920304050607",
-			buttonHave: true,
 		},
 		tips_for_managing_blood_loss: {
 			subheadingText: "",
@@ -70,7 +91,7 @@ const NeedBloodPage = () => {
 		},
 		hero: {
 			subheadingText: "Need blood?",
-			headingText: "Your blood needs are our priority.",
+			headingText: "Your Blood Needs Are Our Priority.",
 			classHint: "hero need-blood-page-hero",
 		},
 		stepsText: {
@@ -110,16 +131,14 @@ const NeedBloodPage = () => {
 
 	const fields = [
 		{
-			key: "bloodType", 
+			key: "bloodType",
 			name: "bloodType",
-			type: "select", 
-			options: [
-				{ value: "A", label: "A" },
-				{ value: "B", label: "B" },
-				{ value: "AB", label: "AB" },
-				{ value: "O", label: "O" },
-			],
-			placeholder: "Select Blood Type",
+			type: "select",
+			options: bloodTypes.map((bloodType) => ({
+			value: bloodType.BloodID,
+			label: bloodType.Type,
+			})),
+			placeholder: "Blood Type",
 			required: true,
 		},
 		{

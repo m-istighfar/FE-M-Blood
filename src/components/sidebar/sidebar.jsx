@@ -23,21 +23,11 @@ export default function Sidebar() {
 					</button>
 					{/* Brand */}
 					<Link
-						className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left uppercase md:block md:pb-2 text-blueGray-600 whitespace-nowrap"
+						className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left uppercase md:block md:pb-2 text-blue whitespace-nowrap"
 						to="/"
 					>
 						<img src={logo} alt="logo" width={"80%"} />
 					</Link>
-					{/* User */}
-					{/* <ul className="flex flex-wrap items-center list-none md:hidden">
-						<li className="relative inline-block">
-						<NotificationDropdown />
-						</li>
-						<li className="relative inline-block">
-						<UserDropdown />
-						</li>
-					</ul> */}
-					{/* Collapse */}
 					<div
 						className={
 							"md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded " +
@@ -45,11 +35,11 @@ export default function Sidebar() {
 						}
 					>
 						{/* Collapse header */}
-						<div className="block pb-4 mb-4 border-b border-solid md:min-w-full md:hidden border-blueGray-200">
+						<div className="block pb-4 mb-4 border-b border-solid md:min-w-full md:hidden border-blue">
 							<div className="flex flex-wrap">
 								<div className="w-6/12">
 									<Link
-										className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left uppercase md:block md:pb-2 text-blueGray-600 whitespace-nowrap"
+										className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left uppercase md:block md:pb-2 text-blue whitespace-nowrap"
 										to="/"
 									>
 										HemoCell
@@ -85,7 +75,7 @@ export default function Sidebar() {
 											"/admin"
 										) !== -1
 											? "text-red hover:text-dark_red"
-											: "text-dark_gray hover:text-gray")
+											: "text-dark_gray hover:text-dark")
 									}
 									to="/admin"
 								>
@@ -101,7 +91,7 @@ export default function Sidebar() {
 											"/donate-blood"
 										) !== -1
 											? "text-red hover:text-dark_red"
-											: "text-dark_gray hover:text-gray")
+											: "text-dark_gray hover:text-dark")
 									}
 									to="/admin/donate-blood"
 								>
@@ -117,7 +107,7 @@ export default function Sidebar() {
 											"/need-blood"
 										) !== -1
 											? "text-red hover:text-dark_red"
-											: "text-dark_gray hover:text-gray")
+											: "text-dark_gray hover:text-dark")
 									}
 									to="/admin/need-blood"
 								>
@@ -133,7 +123,7 @@ export default function Sidebar() {
 											"/host-blood-drive"
 										) !== -1
 											? "text-red hover:text-dark_red"
-											: "text-dark_gray hover:text-gray")
+											: "text-dark_gray hover:text-dark")
 									}
 									to="/admin/host-blood-drive"
 								>
@@ -149,7 +139,7 @@ export default function Sidebar() {
 											"/need-help"
 										) !== -1
 											? "text-red hover:text-dark_red"
-											: "text-dark_gray hover:text-gray")
+											: "text-dark_gray hover:text-dark")
 									}
 									to="/admin/need-help"
 								>
@@ -157,19 +147,14 @@ export default function Sidebar() {
 								</Link>
 							</li>
 						</ul>
-
-						{/* Divider */}
 						<hr className="my-4 md:min-w-full" />
-						{/* Heading */}
 						<h6 className="md:min-w-full text-red text-xs tracking-[3px] uppercase font-bold block pt-1 pb-4 no-underline">
 							Resources
 						</h6>
-						{/* Navigation */}
-
 						<ul className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4">
 							<li className="items-center">
 								<Link
-									className="text-dark_gray hover:text-gray text-[16px] py-3 font-bold block"
+									className="text-dark_gray hover:text-dark text-[16px] py-3 font-bold block"
 									to="/"
 								>
 									Landing Page
@@ -178,7 +163,7 @@ export default function Sidebar() {
 
 							<li className="items-center">
 								<Link
-									className="text-dark_gray hover:text-gray text-[16px] py-3 font-bold block"
+									className="text-dark_gray hover:text-dark text-[16px] py-3 font-bold block"
 									to="/admin"
 								>
 									Dashboard

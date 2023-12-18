@@ -170,7 +170,7 @@ const RegisterPage = () => {
                             <li
                               className={`${
                                 active
-                                  ? "bg-blue-500 text-white"
+                                  ? "bg-blue text-white"
                                   : "text-gray-900"
                               } cursor-pointer select-none relative px-4 py-2`}
                             >

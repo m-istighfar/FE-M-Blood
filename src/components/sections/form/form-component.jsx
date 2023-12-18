@@ -11,14 +11,15 @@ const FormComponent = ({
     formData,
     setFormData,
     handleSubmit,
+    formRef,
 }) => {
     const [error, setError] = useState("");
     const [status, setStatus] = useState("Pending");
-    const inputStyles = `block w-full px-4 py-2 bg-dark text-gray-800 border border-gray-300 rounded-rmd shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`;
+    const inputStyles = `block w-full px-4 py-2 bg-dark text-white border border-gray rounded-rmd shadow-sm focus:outline-none focus:ring-2 focus:ring-blue focus:border-blue`;
 
     return (
         <WrapperSection>
-            <div className="form-wrapper mt-0 w-full p-6 lg:p-20 rounded-rlg shadow-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+            <div className="form-wrapper mt-0 w-full p-6 lg:p-20 rounded-rlg shadow-lg bg-gradient-to-br from-blue to-purple-600 text-white">
                 <h3 className="text-center font-semibold text-lg sm:text-2xl mb-6">
                 {heading}
                 </h3>
@@ -116,7 +117,7 @@ const FormComponent = ({
                     <div className="md:col-span-2 flex justify-center">
                     <button
                         type="submit"
-                        className="rounded-rmd border border-transparent bg-dark text-blue-600 hover:bg-blue hover:text-white transition px-6 py-3 text-sm font-semibold cursor-pointer"
+                        className="rounded-rmd border border-transparent bg-dark text-blue hover:bg-blue hover:text-white transition px-6 py-3 text-sm font-semibold cursor-pointer"
                         onClick={(e) => {
                         handleSubmit(e);
                         setStatus("Submited");

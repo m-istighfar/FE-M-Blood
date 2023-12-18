@@ -14,14 +14,14 @@ const GroupedHeadingComponent = ({
         >
             <span
                 className={`block ${
-                    mode === "light" ? "text-gray-200" : "text-blue-600"
+                    mode === "light" ? "text-dark" : "text-blue"
                 } text-sm md:text-lg uppercase font-semibold tracking-wide`}
             >
                 {subheadingText}
             </span>
             <h2
                 className={`mt-2 ${
-                    mode === "light" ? "text-gray-100" : "text-gray-800"
+                    mode === "light" ? "text-dark" : "text-dark"
                 } text-2xl md:text-4xl font-bold leading-snug`}
             >
                 {headingText}

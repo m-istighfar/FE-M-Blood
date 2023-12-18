@@ -27,10 +27,10 @@ const SideBySideComponent = ({
                     <GroupedHeadingComponent
                         subheadingText={subheadingText}
                         headingText={headingText}
-                        subheadingClass="text-lg md:text-xl text-gray-700"
-                        headingClass="text-xl md:text-3xl text-gray-800 font-semibold"
+                        subheadingClass="text-lg md:text-xl text-dark"
+                        headingClass="text-xl md:text-3xl text-dark font-semibold"
                     />
-                    <ParaComponent innerText={paraText} className="text-sm md:text-base text-gray-600 my-4" />
+                    <ParaComponent innerText={paraText} className="text-sm md:text-base text-gray my-4" />
                     {buttonHave && (
                         <ButtonComponent
                             buttonText={buttonText}

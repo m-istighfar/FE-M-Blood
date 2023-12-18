@@ -13,13 +13,13 @@ const CriteriaComponent = ({
 }) => {
     return (
         <WrapperSection>
-            <div className={`${classHint} wrapper flex flex-col justify-center items-center w-full relative p-10 py-24 sm:p-24 bg-opacity-90 bg-gray-800 text-white rounded-rlg shadow-xl`}>
+            <div className={`${classHint} wrapper flex flex-col justify-center items-center w-full relative p-10 py-24 sm:p-24 bg-opacity-90 bg-gray text-dark rounded-rlg shadow-xl`}>
                 <GroupedHeadingComponent
                     subheadingText={subheadingText}
                     headingText={headingText}
                     mode="light"
                 />
-                <ul className="list-disc list-inside mt-6 text-lg font-semibold text-blue-600">
+                <ul className="list-disc list-inside mt-6 text-lg font-semibold text-blue">
                     {paraText.map((itemText, index) => (
                         <li key={index} className="mb-2">
                             <ListComponent itemText={itemText} />

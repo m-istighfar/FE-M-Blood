@@ -1,31 +1,54 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HeroComponent from "../../sections/hero/hero-component";
 import ThreeStepProcessComponent from "../../sections/three-step-process/three-step-process-component";
 import SideBySideComponent from "../../sections/side-by-side/side-by-side-component";
 import QuoteComponent from "../../sections/quote/quote-component";
 import CriteriaComponent from "../../sections/criteria/criteria-component";
 import FormComponent from "../../sections/form/form-component";
-
 import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
+import { useForm } from "react-hook-form";
+
 
 import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
-import Axios from "axios";
+import axios from "axios";
 
 const DonateBloodPage = () => {
+	const [bloodTypes, setBloodTypes] = useState([]);
+	const [selectedBlood, setSelectedBlood] = useState(null);
+	const { setValue } = useForm();
+
 	const [formData, setFormData] = useState({
 		bloodType: "",
 		scheduledDate: "",
 	});
+
+	useEffect(() => {
+		const fetchBlood = async () => {
+			try {
+				const response = await axios.get("http://localhost:3000/blood-type");
+				setBloodTypes(response.data.data);
+				setSelectedBlood(response.data.data[0]);
+			} catch (error) {
+				console.error("Error fetching blood:", error);
+			}
+		};
+		
+			fetchBlood();
+		}, []);
+
+		useEffect(() => {
+			setValue("BloodTypeID", selectedBlood?.BloodTypeID);
+		}, [selectedBlood, setValue]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		console.log("success");
 
-		Axios.post("http://localhost:3000/appointments/create", {
+		axios.post("http://localhost:3000/appointments/create", {
 			bloodType: formData.bloodType,
 			scheduledDate: formData.scheduledDate,
 		})
@@ -61,9 +84,6 @@ const DonateBloodPage = () => {
 			― Blood cannot be manufactured, which means that the only source of blood is through donations from volunteers.
 			― Donating blood can also have health benefits for the donor, such as reducing the risk of heart disease and cancer.`,
 			imageUrl: "../../../assets/images/blood-donation(1).jpg",
-			buttonText: "Donate Now",
-			buttonLink: "/donate-blood",
-			buttonHave: true,
 		},
 		eligiblity_criteria: {
 			subheadingText: "Are you ready?",
@@ -84,7 +104,7 @@ const DonateBloodPage = () => {
 		},
 		hero: {
 			subheadingText: "Donate Blood",
-			headingText: "Save life by donating blood today",
+			headingText: "Save Life By Donating Blood Today",
 			classHint: "donate-blood-page-hero",
 		},
 		stepsText: {
@@ -122,13 +142,11 @@ const DonateBloodPage = () => {
 			key: "bloodType",
 			name: "bloodType",
 			type: "select",
-			options: [
-				{ value: "A", label: "A" },
-				{ value: "B", label: "B" },
-				{ value: "AB", label: "AB" },
-				{ value: "O", label: "O" },
-				],
-			placeholder: "Select Blood Type",
+			options: bloodTypes.map((bloodType) => ({
+			value: bloodType.BloodID,
+			label: bloodType.Type,
+			})),
+			placeholder: "Blood Type",
 			required: true,
 		},
 		{

@@ -14,8 +14,10 @@ const navigation = [
 	{ name: "Host Blood Drive", href: "/host-blood-drive" },
 	{ name: "Donate Money", href: "https://donorbox.org/donate-money-11" },
 	{ name: "Help Needed", href: "/contact" },
-	{ name: "Need Blood", href: "/need-blood", secondLast: true },
-	{ name: "Donate Blood", href: "/donate-blood", last: true },
+	{ name: "Need Blood", href: "/need-blood" },
+	{ name: "Donate Blood", href: "/donate-blood" },
+	{ name: "Login", href: "/login", secondLast: true },
+	{ name: "Register", href: "/register", last: true },
 ];
 
 const compnayName = "MBlood Blood Bank";
@@ -49,7 +51,7 @@ const HeaderComponent = () => {
     }, [blurActivation, location.pathname]);
 
     return (
-        <header className={`fixed inset-x-0 top-0 z-50 border-b border-blue-300 ${blurActivation ? "bg-white/[.2] backdrop-blur-md shadow-md" : ""}`}>
+        <header className={`fixed inset-x-0 top-0 z-50 border-b border-blue ${blurActivation ? "bg-white/[.2] backdrop-blur-md shadow-md" : ""}`}>
             <nav className="flex items-center justify-between p-4 lg:px-8 max-w-7xl m-auto">
                 <div className="flex lg:flex-1">
                     <a href="/" className="-m-1.5 p-1.5">
@@ -80,7 +82,7 @@ const HeaderComponent = () => {
 								setMobileMenuOpen(false);
 							}}
 							to={item.href}
-							active="bg-red"
+							active="bg-blue"
 							className={`text-sm font-medium hover:bg-blue lg:transition leading-6 text-off_blue px-3 py-2 rounded-rsm ${
 								item.secondLast &&
 								`${reuseableClass.for_second_last}`
@@ -102,7 +104,7 @@ const HeaderComponent = () => {
 				onClose={setMobileMenuOpen}
 			>
 				<div className="fixed inset-0 z-50" />
-				<Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full px-6 py-6 overflow-y-auto bg-blue sm:max-w-sm sm:ring-1 sm:ring-blue-900/10">
+				<Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full px-6 py-6 overflow-y-auto bg-blue sm:max-w-sm sm:ring-1 sm:ring-blue">
 					<div className="flex items-center justify-between">
 						<a href="/" className="-m-1.5 p-1.5">
 							<span className="sr-only">{compnayName}</span>
@@ -114,7 +116,7 @@ const HeaderComponent = () => {
 						</a>
 						<button
 							type="button"
-							className="-m-2.5 rounded-rmd p-2.5 text-blue-900"
+							className="-m-2.5 rounded-rmd p-2.5 text-blue"
 							onClick={() => setMobileMenuOpen(false)}
 						>
 							<span className="sr-only">Close menu</span>
@@ -122,7 +124,7 @@ const HeaderComponent = () => {
 						</button>
 					</div>
 					<div className="flow-root mt-6">
-						<div className="-my-6 divide-y divide-blue-500/10">
+						<div className="-my-6 divide-y divide-blue">
 							<div className="py-6 space-y-2">
 								{navigation.map((item) => (
 									<NavLink
@@ -132,7 +134,7 @@ const HeaderComponent = () => {
 											setMobileMenuOpen(false);
 										}}
 										to={item.href}
-										className={`-mx-3 block px-3 py-2 text-base font-semibold leading-7 text-blue-900 hover:bg-dark rounded-rsm ${
+										className={`-mx-3 block px-3 py-2 text-base font-semibold leading-7 text-blue hover:bg-dark rounded-rsm ${
 											item.secondLast &&
 											`rounded-rsm border border-dark/[.5] hover:bg-blue hover:text-dark`
 										} ${
