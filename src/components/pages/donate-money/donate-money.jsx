@@ -13,9 +13,8 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 
 const DonateMoneyPage = () => {
-  const [bloodTypes, setBloodTypes] = useState([]);
-  const [provinces, setProvinces] = useState([]);
   const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
+  const [totalDonations, setTotalDonations] = useState("Loading...");
   const {
     register,
     handleSubmit,
@@ -24,60 +23,43 @@ const DonateMoneyPage = () => {
   } = useForm();
 
   useEffect(() => {
-    const fetchBloodTypes = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/blood-type");
-        setBloodTypes(response.data.data);
-      } catch (error) {
-        console.error("Error fetching blood types:", error);
-      }
-    };
-    const fetchProvinces = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/province");
-        setProvinces(response.data.data);
-      } catch (error) {
-        console.error("Error fetching provinces:", error);
-      }
-    };
+    const script = document.createElement("script");
+    script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
+    script.setAttribute("data-client-key", "SB-Mid-client-D7Pe2FmM10sLsp6J");
+    document.body.appendChild(script);
 
-    fetchBloodTypes();
-    fetchProvinces();
+    fetchTotalDonations();
   }, []);
+
+  const fetchTotalDonations = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/total-donations");
+      setTotalDonations(response.data.totalDonations || "0");
+    } catch (error) {
+      console.error("Error fetching total donations:", error);
+      setTotalDonations("Error");
+    }
+  };
 
   const onSubmit = async (data) => {
     setFormStatus({ loading: true, message: "" });
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.error("No access token found. User must be logged in.");
-      setFormStatus({ loading: false, message: "User must be logged in." });
-      return;
-    }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/appointments/create",
-        data,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-      console.log("Appointment created successfully:", response.data);
+      const response = await axios.post("http://localhost:3000/donate", data);
+      if (response.data.snapToken) {
+        window.snap.pay(response.data.snapToken);
+      }
       reset();
       setFormStatus({
         loading: false,
-        message:
-          "Appointment created successfully. Thank you for your willingness to donate blood!",
+        message: "Donation processed successfully. Thank you for your support!",
       });
+      fetchTotalDonations();
     } catch (error) {
-      console.error("Error creating appointment:", error);
-
-      let errorMessage = "Error creating appointment.";
-      if (error.response && error.response.data && error.response.data.error) {
-        errorMessage = error.response.data.error;
-      }
-
+      console.error("Error processing donation:", error);
       setFormStatus({
         loading: false,
-        message: errorMessage,
+        message: "Error processing donation. Please try again.",
       });
     }
   };
@@ -153,36 +135,39 @@ const DonateMoneyPage = () => {
 
   const fields = [
     {
-      key: "bloodType",
-      name: "bloodType",
-      type: "select",
-      options: [
-        { value: "", label: "Select Blood Type", disabled: true },
-        ...bloodTypes.map((type) => ({ value: type.Type, label: type.Type })),
-      ],
-      placeholder: "Blood Type",
-      required: "Blood type is required",
+      key: "firstName",
+      name: "firstName",
+      type: "text",
+      placeholder: "First Name",
+      required: "First name is required",
     },
     {
-      key: "location",
-      name: "location",
-      type: "select",
-      options: [
-        { value: "", label: "Select a Province", disabled: true },
-        ...provinces.map((province) => ({
-          value: province.Name,
-          label: province.Name,
-        })),
-      ],
-      placeholder: "Location",
-      required: "Location is required",
+      key: "lastName",
+      name: "lastName",
+      type: "text",
+      placeholder: "Last Name",
+      required: "Last name is required",
     },
     {
-      key: "scheduledDate",
-      name: "scheduledDate",
-      type: "date",
-      placeholder: "Scheduled Date",
-      required: true,
+      key: "email",
+      name: "email",
+      type: "email",
+      placeholder: "Email",
+      required: "Email is required",
+    },
+    {
+      key: "phone",
+      name: "phone",
+      type: "tel",
+      placeholder: "Phone Number",
+      required: "Phone number is required",
+    },
+    {
+      key: "amount",
+      name: "amount",
+      type: "number",
+      placeholder: "Donation Amount",
+      required: "Donation amount is required",
     },
   ];
 
@@ -190,15 +175,23 @@ const DonateMoneyPage = () => {
     <>
       <HeaderComponent />
 
-      <HeroComponent {...DonateBloodPageDetails.hero} />
+      <HeroComponent
+        subheadingText={DonateBloodPageDetails.hero.subheadingText}
+        headingText={DonateBloodPageDetails.hero.headingText}
+        buttonText={DonateBloodPageDetails.hero.buttonText}
+        buttonLink={DonateBloodPageDetails.hero.buttonLink}
+        classHint={DonateBloodPageDetails.hero.classHint}
+        totalDonations={totalDonations}
+      />
+
       <FormComponent
         isLoading={formStatus.loading}
         fields={fields}
         register={register}
         handleSubmit={handleSubmit(onSubmit)}
         errors={errors}
-        heading={"Schedule an Appointment"}
-        buttonText={"Schedule Now"}
+        heading={"Make a Donation"}
+        buttonText={"Donate Now"}
       />
       {formStatus.message && (
         <p className="error-message text-center">{formStatus.message}</p>
