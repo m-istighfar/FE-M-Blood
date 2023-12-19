@@ -8,199 +8,189 @@ import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
 
 import axios from "axios";
-
 import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const ContactPage = () => {
+  const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
+  const [bloodTypes, setBloodTypes] = useState([]);
+  const [provinces, setProvinces] = useState([]);
 
-	const [provinces, setProvinces] = useState([]);
-	const [selectedProvince, setSelectedProvince] = useState(null);
-	const [bloodTypes, setBloodTypes] = useState([]);
-	const [selectedBlood, setSelectedBlood] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
-	const { setValue } = useForm();
+  useEffect(() => {
+    const fetchBloodTypes = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/blood-type");
+        setBloodTypes(response.data.data);
+      } catch (error) {
+        console.error("Error fetching blood types:", error);
+      }
+    };
+    const fetchProvinces = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/province");
+        setProvinces(response.data.data);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    };
 
-	const [formData, setFormData] = useState({
-		bloodType: "",
-		isWillingToDonate: "",
-		canHelpInEmergency: "",
-		reason: "",
-		province: "",
-	});
+    fetchBloodTypes();
+    fetchProvinces();
+  }, []);
 
-	useEffect(() => {
-		const fetchProvinces = async () => {
-			try {
-				const response = await axios.get("http://localhost:3000/province");
-				setProvinces(response.data.data);
-				setSelectedProvince(response.data.data[0]);
-			} catch (error) {
-				console.error("Error fetching provinces:", error);
-			}
-		};
-		
-			fetchProvinces();
-		}, []);
+  const onSubmit = async (data) => {
+    setFormStatus({ loading: true, message: "" });
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.error("No access token found. User must be logged in.");
+      setFormStatus({ loading: false, message: "User must be logged in." });
+      return;
+    }
 
-		useEffect(() => {
-			setValue("provinceId", selectedProvince?.ProvinceID);
-		}, [selectedProvince, setValue]);
+    data.isWillingToDonate = data.isWillingToDonate === "true";
+    data.canHelpInEmergency = data.canHelpInEmergency === "true";
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/help-offer/offer",
+        data,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      console.log("Help offer created successfully:", response.data);
+      reset();
+      setFormStatus({
+        loading: false,
+        message:
+          "Help offer created successfully. Thank you for your contribution!",
+      });
+    } catch (error) {
+      console.error("Error creating help offer:", error);
+      let errorMessage = "Error creating help offer.";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+      setFormStatus({ loading: false, message: errorMessage });
+    }
+  };
 
-		useEffect(() => {
-			const fetchBlood = async () => {
-				try {
-					const response = await axios.get("http://localhost:3000/blood-type");
-					setBloodTypes(response.data.data);
-					setSelectedBlood(response.data.data[0]);
-				} catch (error) {
-					console.error("Error fetching blood:", error);
-				}
-			};
-			
-				fetchBlood();
-			}, []);
-	
-			useEffect(() => {
-				setValue("BloodTypeID", selectedBlood?.BloodTypeID);
-			}, [selectedBlood, setValue]);
+  const ContactPageDetails = {
+    hero: {
+      subheadingText: "Got any Questions?",
+      headingText: "We're Here to Help",
+      classHint: "contact-page-hero",
+    },
+  };
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+  const fields = [
+    {
+      key: "bloodType",
+      name: "bloodType",
+      type: "select",
+      options: [
+        { value: "", label: "Select Blood Type", disabled: true },
+        ...bloodTypes.map((type) => ({ value: type.Type, label: type.Type })),
+      ],
+      placeholder: "Blood Type",
+      required: "Blood type is required",
+    },
+    {
+      key: "isWillingToDonate",
+      name: "isWillingToDonate",
+      type: "select",
+      options: [
+        { value: true, label: "Yes" },
+        { value: false, label: "No" },
+      ],
+      placeholder: "Are you willing to donate blood?",
+      required: "This field is required",
+    },
+    {
+      key: "canHelpInEmergency",
+      name: "canHelpInEmergency",
+      type: "select",
+      options: [
+        { value: true, label: "Yes" },
+        { value: false, label: "No" },
+      ],
+      placeholder: "Can you help in emergencies?",
+      required: "This field is required",
+    },
+    {
+      key: "reason",
+      name: "reason",
+      type: "text",
+      placeholder: "Why do you want to help?",
+      required: false,
+    },
+    {
+      key: "location",
+      name: "location",
+      type: "select",
+      options: [
+        { value: "", label: "Select a Province", disabled: true },
+        ...provinces.map((province) => ({
+          value: province.Name,
+          label: province.Name,
+        })),
+      ],
+      placeholder: "Location",
+      required: "Location is required",
+    },
+  ];
 
-		console.log(formData);
+  const contactDetails = [
+    {
+      key: "phone",
+      stepNumber: <FaPhoneAlt />,
+      stepName: "Phone",
+      stepDescription: "(+62)877799770xx",
+      stepUrl: "tel:+62877799770xx",
+    },
+    {
+      key: "email",
+      stepNumber: <MdEmail />,
+      stepName: "Email",
+      stepDescription: "help@mblood.com",
+      stepUrl: "mailto:help@mblood.com",
+    },
+    {
+      key: "address",
+      stepNumber: <FaMapMarkerAlt />,
+      stepName: "Address",
+      stepDescription: "Indonesia",
+      stepUrl: "https://goo.gl/maps/sszR4K9aDKuYfy2Y8",
+    },
+  ];
 
-		axios.post("http://localhost:3000/help-offer/offer", {
-			bloodType: formData.bloodType,
-			isWillingToDonate: formData.isWillingToDonate,
-			canHelpInEmergency: formData.canHelpInEmergency,
-			reason: formData.reason,
-			location: formData.location,
-		})
-			.then((response) => {
-				console.log("success");
-				console.log(response.data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-
-		newUsersInsertRequest(formData, "need-help");
-
-		setFormData({
-		bloodType: "",
-		isWillingToDonate: "",
-		canHelpInEmergency: "",
-		reason: "",
-		province: "",
-		});
-	};
-
-	const ContactPageDetails = {
-		hero: {
-			subheadingText: "Got any Questions?",
-			headingText: "Don't Know What to Do? Let Us Assist You.",
-			classHint: "contact-page-hero",
-		},
-	};
-
-	const fields = [
-		{
-			key: "bloodType",
-			name: "bloodType",
-			type: "select",
-			options: bloodTypes.map((bloodType) => ({
-			value: bloodType.BloodID,
-			label: bloodType.Type,
-			})),
-			placeholder: "Blood Type",
-			required: true,
-		},
-		{
-			key: "isWillingToDonate",
-			name: "isWillingToDonate",
-			type: "select",
-			options: [
-				{ value: "yes", label: "Yes" },
-				{ value: "no", label: "No" },
-			],
-			placeholder: "Are you willing to donate?",
-			required: true,
-		},
-		{
-			key: "canHelpInEmergency",
-			name: "canHelpInEmergency",
-			type: "select",
-			options: [
-				{ value: "yes", label: "Yes" },
-				{ value: "no", label: "No" },
-			],
-			placeholder: "Can you help in an emergency?",
-			required: true,
-		},
-		{
-			key: "reason",
-			name: "reason",
-			type: "text",
-			placeholder: "Reason",
-			required: false,
-		},
-		{
-			key: "province",
-			name: "province",
-			type: "select",
-			options: provinces.map((province) => ({
-			value: province.ProvinceID,
-			label: province.Name
-			})),
-			placeholder: "Province",
-			required: true,
-		},
-	];
-
-	const contactDetails = [
-		{
-			key: "phone",
-			stepNumber: <FaPhoneAlt />,
-			stepName: "Phone",
-			stepDescription: "(+62)877799770xx",
-			stepUrl: "tel:+62877799770xx",
-		},
-		{
-			key: "email",
-			stepNumber: <MdEmail />,
-			stepName: "Email",
-			stepDescription: "help@mblood.com",
-			stepUrl: "mailto:help@mblood.com",
-		},
-		{
-			key: "address",
-			stepNumber: <FaMapMarkerAlt />,
-			stepName: "Address",
-			stepDescription: "Indonesia",
-			stepUrl: "https://goo.gl/maps/sszR4K9aDKuYfy2Y8",
-		},
-	];
-
-	return (
-		<>
-			<HeaderComponent />
-
-			<HeroComponent {...ContactPageDetails.hero} />
-			<FormComponent
-				fields={fields}
-				heading={"We're to help"}
-				buttonText={"Send Message"}
-				handleSubmit={handleSubmit}
-				formData={formData}
-				setFormData={setFormData}
-			/>
-			<ContactDetailsComponent contactDetails={contactDetails} />
-			<BeforeFooterCTA />
-			<FooterComponent />
-		</>
-	);
+  return (
+    <>
+      <HeaderComponent />
+      <HeroComponent {...ContactPageDetails.hero} />
+      <FormComponent
+        isLoading={formStatus.loading}
+        fields={fields}
+        register={register}
+        handleSubmit={handleSubmit(onSubmit)}
+        errors={errors}
+        heading={"Want to Help? Let Us Know"}
+        buttonText={"Submit"}
+      />
+      {formStatus.message && (
+        <p className="error-message text-center">{formStatus.message}</p>
+      )}
+      <ContactDetailsComponent contactDetails={contactDetails} />
+      <BeforeFooterCTA />
+      <FooterComponent />
+    </>
+  );
 };
 
 export default ContactPage;
