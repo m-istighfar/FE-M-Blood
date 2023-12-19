@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from "prop-types";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
@@ -13,28 +14,30 @@ function DisplayTableComponent({
   setSelectedId,
   updatedData,
   setUpdatedData,
+  currentPage, // pass currentPage as a prop
+  limit, // pass limit as a prop
 }) {
   // Fungsi untuk menampilkan baris tabel
   const renderTableRows = (data) => {
-    return data.map((item) => (
+    return data.map((item, index) => (
       <tr key={item.AppointmentID} className="border-b">
-        {/* Iterasi melalui setiap key dari item dan menampilkan nilainya */}
-        {tableHeader.map((header) => (
+        <td className="py-2 px-4">{(currentPage - 1) * limit + index + 1}</td>
+        {tableHeader.slice(1).map((header) => (
           <td key={header} className="py-2 px-4">
             {item[header]}
           </td>
         ))}
         <td className="py-2 px-4">
           <button
-            onClick={() => handleUpdateClick(item.id)}
+            onClick={() => handleUpdateClick(item)}
             className="bg-blue text-white px-2 py-1 rounded-md hover:bg-blue-700"
           >
-            <PencilIcon className="w-5 h-5" /> {/* Ikon "Pencil" */}
+            <PencilIcon className="w-5 h-5" />
           </button>
         </td>
         <td className="py-2 px-4">
           <button
-            onClick={() => handleDelete(item.id)}
+            onClick={() => handleDelete(item)}
             className="bg-red text-white px-2 py-1 rounded-md hover:bg-red-700"
           >
             <TrashIcon className="w-5 h-5" /> {/* Ikon "Trash" */}
