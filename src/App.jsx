@@ -11,6 +11,7 @@ import DonateBloodPage from "./components/pages/donate-blood/donate-blood-page";
 import HostBloodDrivePage from "./components/pages/host-blood-drive/host-blood-drive";
 import NeedBloodPage from "./components/pages/need-blood/need-blood-page";
 import ContactPage from "./components/pages/contact/contact-page";
+import DonateMoneyPage from "./components/pages/donate-money/donate-money";
 import Admin from "./components/layouts/admin";
 
 import Dashboard from "../src/components/views/admin/dashboard";
@@ -43,6 +44,7 @@ export default function App() {
 
         <Route exact path="/" element={<HomePage />} />
         <Route path="/host-blood-drive" element={<HostBloodDrivePage />} />
+        <Route path="/donate-money" element={<DonateMoneyPage />} />
         <Route path="/donate-blood" element={<DonateBloodPage />} />
         <Route path="/need-blood" element={<NeedBloodPage />} />
         <Route path="/contact" element={<ContactPage />} />
