@@ -11,61 +11,76 @@ import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
 
 import axios from "axios";
-import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
+// import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const NeedBloodPage = () => {
   const [bloodTypes, setBloodTypes] = useState([]);
-  const [selectedBlood, setSelectedBlood] = useState(null);
-
-  const { setValue } = useForm();
-
-  const [formData, setFormData] = useState({
-    bloodType: "",
-    additionalInfo: "",
-  });
+  const [provinces, setProvinces] = useState([]);
+  const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
-    const fetchBlood = async () => {
+    const fetchBloodTypes = async () => {
       try {
         const response = await axios.get("http://localhost:3000/blood-type");
         setBloodTypes(response.data.data);
-        setSelectedBlood(response.data.data[0]);
       } catch (error) {
-        console.error("Error fetching blood:", error);
+        console.error("Error fetching blood types:", error);
       }
     };
 
-    fetchBlood();
+    const fetchProvinces = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/province");
+        setProvinces(response.data.data);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    };
+
+    fetchBloodTypes();
+    fetchProvinces();
   }, []);
 
-  useEffect(() => {
-    setValue("BloodTypeID", selectedBlood?.BloodTypeID);
-  }, [selectedBlood, setValue]);
+  const onSubmit = async (data) => {
+    setFormStatus({ loading: true, message: "" });
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.error("No access token found. User must be logged in.");
+      setFormStatus({ loading: false, message: "User must be logged in." });
+      return;
+    }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log(formData);
-
-    axios
-      .post("http://localhost:3001/create-need-blood", {
-        bloodType: formData.bloodType,
-        additionalInfo: formData.additionalInfo,
-      })
-      .then((response) => {
-        console.log("success");
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/emergency/request",
+        data,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      console.log("Emergency request submitted:", response.data);
+      reset();
+      setFormStatus({
+        loading: false,
+        message: "Emergency request submitted successfully.",
       });
+    } catch (error) {
+      console.error("Error submitting emergency request:", error);
 
-    newUsersInsertRequest(formData, "need-blood");
+      let errorMessage = "Error submitting emergency request.";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
 
-    setFormData({
-      bloodType: "",
-      additionalInfo: "",
-    });
+      setFormStatus({
+        loading: false,
+        message: errorMessage,
+      });
+    }
   };
 
   const NeedBloodPageDetails = {
@@ -135,19 +150,32 @@ const NeedBloodPage = () => {
       key: "bloodType",
       name: "bloodType",
       type: "select",
-      options: bloodTypes.map((bloodType) => ({
-        value: bloodType.BloodID,
-        label: bloodType.Type,
-      })),
+      options: [
+        { value: "", label: "Select Blood Type", disabled: true },
+        ...bloodTypes.map((type) => ({ value: type.Type, label: type.Type })),
+      ],
       placeholder: "Blood Type",
-      required: true,
+      required: "Blood type is required",
+    },
+    {
+      key: "location",
+      name: "location",
+      type: "select",
+      options: [
+        { value: "", label: "Select a Province", disabled: true },
+        ...provinces.map((province) => ({
+          value: province.Name,
+          label: province.Name,
+        })),
+      ],
+      placeholder: "Location",
+      required: "Location is required",
     },
     {
       key: "additionalInfo",
       name: "additionalInfo",
       type: "text",
-      placeholder: "Additional Info",
-      required: false,
+      placeholder: "Additional Information",
     },
   ];
 
@@ -157,13 +185,17 @@ const NeedBloodPage = () => {
 
       <HeroComponent {...NeedBloodPageDetails.hero} />
       <FormComponent
+        isLoading={formStatus.loading}
         fields={fields}
         heading={"Request For Emergency Blood"}
-        buttonText={"Request blood"}
-        handleSubmit={handleSubmit}
-        formData={formData}
-        setFormData={setFormData}
+        buttonText={"Request Blood"}
+        register={register}
+        handleSubmit={handleSubmit(onSubmit)}
+        errors={errors}
       />
+      {formStatus.message && (
+        <p className="error-message text-center">{formStatus.message}</p>
+      )}
       <QuoteComponent {...NeedBloodPageDetails.quote} />
       <SearchBloodStockComponent {...NeedBloodPageDetails.bloodStock} />
       <ThreeStepProcessComponent
