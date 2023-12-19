@@ -1,138 +1,148 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
-import FilterableComponent from "../../sections/filterable/filterable-component";
+import { format } from "date-fns";
+// import InitialDataFetching from "../../utility-functions/initial-data-fetching";
 
 export default function AdminDonateBlood() {
-    const [appointments, setAppointments] = useState([]);
-    const [selectedAppointment, setSelectedAppointment] = useState(null);
-    const [filter, setFilter] = useState("");
-    const [selectedOpt, setSelectedOpt] = useState("location");
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [unauthorized, setUnauthorized] = useState(false);
-	const handleRescheduleAppointment = (appointmentId, newScheduledDate) => {
-        axios.post("http://localhost:3000/appointments/reschedule", {
-            appointmentId: appointmentId,
-            newScheduledDate: newScheduledDate
-        })
-        .then(response => {
-            console.log(response.data.message);
-        })
-        .catch(error => {
-            console.error("Error rescheduling appointment:", error);
-        });
-    };
+  const [data, setData] = useState([]);
+  const [status, setStatus] = useState("normal");
+  const [selectedId, setSelectedId] = useState(null);
+  const [updatedData, setUpdatedData] = useState({
+    name: "",
+    phone: "",
+    bloodType: "",
+    message: "",
+  });
 
-	const filterData = (search) => {
-        if (unauthorized) {
-            // Return an empty array if unauthorized
-            return [];
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          console.error("No access token found. User must be logged in.");
+          return;
         }
 
-        return appointments.filter((appointment) => {
-            if (selectedOpt === "all") {
-                return Object.values(appointment).join(" ").toLowerCase().includes(search.toLowerCase());
-            } else {
-                return appointment[selectedOpt]?.toString().toLowerCase().includes(search.toLowerCase());
-            }
+        const response = await axios.get("http://localhost:3000/appointments", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
+
+        // Ubah format tanggal di sini
+        const formattedData = response.data.data.appointments.map(
+          (appointment) => ({
+            ...appointment,
+            ScheduledDate: format(
+              new Date(appointment.ScheduledDate),
+              "yyyy-MM-dd HH:mm:ss"
+            ),
+            BloodType: appointment.BloodType.Type, // Ganti BloodTypeID dengan BloodType.Type
+          })
+        );
+
+        setData(formattedData); // Update state dengan data yang telah diubah format tanggal
+        console.log("Appointments fetched successfully:", response.data.data);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
     };
 
-    const getFilteredData = () => {
-        return filterData(filter);
-    };
+    fetchAppointments();
+  }, []);
 
-    useEffect(() => {
-        setIsLoading(true);
-        axios.get("http://localhost:3000/appointments")
-            .then(response => {
-                setAppointments(response.data.data.appointments);
-            })
-            .catch(error => {
-                if (error.response && error.response.status === 401) {
-                    setUnauthorized(true);
-                } else {
-                    console.error("Error fetching appointments:", error);
-                    setError(error);
+  useEffect(() => {
+    console.log("Current state data:", data);
+  }, [data]);
+
+  const handleDonatedChange = (id) => {
+    const item = data.find((item) => item.id === id);
+    let status = !item.donated;
+
+    axios
+      .put(`http://localhost:3001/api/donate-blood/donated`, {
+        status,
+        id,
+      })
+      .then((response) => {
+        setData(
+          data.map((item) =>
+            item.id === id ? { ...item, donated: status } : item
+          )
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleDelete = (id) => {
+    axios
+      .delete(`http://localhost:3001/api/donate-blood/delete/${id}`)
+      .then((response) => {
+        setData(data.filter((item) => item.id !== id));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleUpdateClick = (id) => {
+    axios
+      .put(`http://localhost:3001/api/donate-blood/update/${id}`, {
+        updatedData,
+      })
+      .then((response) => {
+        setData(
+          data.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  name: updatedData.name,
+                  phone: updatedData.phone,
+                  bloodType: updatedData.bloodType,
+                  message: updatedData.message,
                 }
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    }, []);
+              : item
+          )
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
-    const fetchAppointmentById = (id) => {
-        axios.get(`http://localhost:3000/appointments/${id}`)
-            .then(response => {
-                setSelectedAppointment(response.data.data);
-            })
-            .catch(error => {
-                console.error(`Error fetching appointment with ID ${id}:`, error);
-            });
-    };
+  const tableHeader = [
+    "UserID",
+    "BloodType",
+    "ScheduledDate",
+    "Location",
+    "Status",
+  ];
 
-    const handleSearchChange = (e) => {
-        setFilter(e.target.value);
-    };
-
-    const handleInputChange = (e) => {
-        setSelectedOpt(e.target.value);
-    };
-
-    const handleViewDetails = (appointmentId) => {
-        fetchAppointmentById(appointmentId);
-    };
-
-    const optionsData = [
-        { id: 1, name: "All", value: "all" },
-        { id: 2, name: "Location", value: "location" },
-        { id: 3, name: "Status", value: "status" },
-        { id: 4, name: "Blood Type", value: "BloodType.Type" },
-    ];
-
-    const tableHeader = [
-        "Appointment ID",
-        "User ID",
-        "Blood Type",
-        "Scheduled Date",
-        "Location",
-        "Status",
-        "Actions",
-    ];
-
-	return (
-        <>
-            <HeaderStats heading="Blood Donation Appointments" />
-            <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
-                {isLoading ? <p>Loading Appointments...</p> : (
-                    <>
-                        <FilterableComponent
-                            filter={filter}
-                            handleSearchChange={handleSearchChange}
-                            optionsData={optionsData}
-                            selectedOpt={selectedOpt}
-                            handleInputChange={handleInputChange}
-                        />
-                        <div className="overflow-x-scroll">
-                            <DisplayTableComponent
-                                tableHeader={tableHeader}
-                                filterData={getFilteredData}
-                                onViewDetails={handleViewDetails}
-                                onReschedule={handleRescheduleAppointment}
-                            />
-                        </div>
-                        {unauthorized && <p className="text-red-500">Unauthorized access. Please log in.</p>}
-                    </>
-                )}
-                {error && !unauthorized && <p className="text-red-500">Error loading data: {error.message}</p>}
-                {selectedAppointment && (
-                    <div>
-                        {/* Display selected appointment details here */}
-                    </div>
-                )}
-            </div>
-        </>
-    );
+  return (
+    <>
+      <HeaderStats heading="Blood Donating Users" />
+      <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
+        <div className="overflow-x-scroll">
+          <DisplayTableComponent
+            tableHeader={tableHeader}
+            data={data} // Pass the entire dataset
+            handleCheckboxChange={handleDonatedChange}
+            type={"donate-blood"}
+            handleUpdateClick={handleUpdateClick}
+            handleDelete={handleDelete}
+            status={status}
+            setStatus={setStatus}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            updatedData={updatedData}
+            setUpdatedData={setUpdatedData}
+          />
+        </div>
+      </div>
+    </>
+  );
 }
