@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import HeroComponent from "../../sections/hero/hero-component";
 import ThreeStepProcessComponent from "../../sections/three-step-process/three-step-process-component";
 import SideBySideComponent from "../../sections/side-by-side/side-by-side-component";
@@ -9,67 +10,64 @@ import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
 
 import axios from "axios";
-import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
+// import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const HostBloodDrivePage = () => {
   const [provinces, setProvinces] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState(null);
-
-  const { setValue } = useForm();
-
-  const [formData, setFormData] = useState({
-    institute: "",
-    province: "",
-    designation: "",
-    schedule: "",
-  });
+  const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
         const response = await axios.get("http://localhost:3000/province");
         setProvinces(response.data.data);
-        setSelectedProvince(response.data.data[0]);
       } catch (error) {
         console.error("Error fetching provinces:", error);
+
+        setFormStatus({
+          loading: false,
+          message: "Unable to fetch provinces. Please try again later.",
+        });
       }
     };
 
     fetchProvinces();
   }, []);
-
-  useEffect(() => {
-    setValue("provinceId", selectedProvince?.ProvinceID);
-  }, [selectedProvince, setValue]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log(formData);
-
-    axios
-      .post("http://localhost:3000/blood-drive/create", {
-        institute: formData.institute,
-        province: selectedProvince?.ProvinceID,
-        designation: formData.designation,
-        schedule: formData.schedule,
-      })
-      .then((response) => {
-        console.log("success");
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
+  const onSubmit = async (data) => {
+    setFormStatus({ loading: true, message: "" });
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.error("No access token found. User must be logged in.");
+      setFormStatus({ loading: false, message: "User must be logged in." });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/blood-drive/create",
+        data,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      console.log("Blood drive created successfully:", response.data);
+      reset();
+      setFormStatus({
+        loading: false,
+        message:
+          "Blood drive created successfully. Thank you for your contribution!",
       });
-
-    newUsersInsertRequest(formData, "host-blood-drive");
-
-    setFormData({
-      institute: "",
-      province: "",
-      designation: "",
-      schedule: "",
-    });
+    } catch (error) {
+      console.error("Error creating blood drive:", error);
+      let errorMessage = "Error creating blood drive.";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+      setFormStatus({ loading: false, message: errorMessage });
+    }
   };
 
   const HostBloodDrivePageDetails = {
@@ -136,33 +134,33 @@ const HostBloodDrivePage = () => {
       key: "institute",
       name: "institute",
       type: "text",
-      placeholder: "Institute",
-      required: true,
-    },
-    {
-      key: "province",
-      name: "province",
-      type: "select",
-      options: provinces.map((province) => ({
-        value: province.ProvinceID,
-        label: province.Name,
-      })),
-      placeholder: "Province",
-      required: true,
+      placeholder: "Institute Name",
+      required: "Institute name is required",
     },
     {
       key: "designation",
       name: "designation",
       type: "text",
       placeholder: "Designation",
-      required: false,
+      required: true,
     },
     {
-      key: "schedule",
-      name: "schedule",
+      key: "provinceName",
+      name: "provinceName",
+      type: "select",
+      options: provinces.map((province) => ({
+        value: province.Name,
+        label: province.Name,
+      })),
+      placeholder: "Select Province",
+      required: "Province selection is required",
+    },
+    {
+      key: "scheduledDate",
+      name: "scheduledDate",
       type: "date",
-      placeholder: "Schedule",
-      required: true,
+      placeholder: "Scheduled Date",
+      required: "Scheduled date is required",
     },
   ];
 
@@ -171,13 +169,17 @@ const HostBloodDrivePage = () => {
       <HeaderComponent />
       <HeroComponent {...HostBloodDrivePageDetails.hero} />
       <FormComponent
+        isLoading={formStatus.loading}
         fields={fields}
+        register={register}
+        handleSubmit={handleSubmit(onSubmit)}
+        errors={errors}
         heading={"Host a Blood Drive"}
-        buttonText={"Schedule Host"}
-        handleSubmit={handleSubmit}
-        formData={formData}
-        setFormData={setFormData}
+        buttonText={"Submit Request"}
       />
+      {formStatus.message && (
+        <p className="error-message text-center">{formStatus.message}</p>
+      )}
       <ThreeStepProcessComponent
         stepsText={HostBloodDrivePageDetails.stepsText}
         stepDetails={stepDetails}
