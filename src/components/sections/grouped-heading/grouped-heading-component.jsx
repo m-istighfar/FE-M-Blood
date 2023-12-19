@@ -15,7 +15,7 @@ const GroupedHeadingComponent = ({
             <span
                 className={`block ${
                     mode === "light" ? "text-dark" : "text-blue"
-                } text-sm md:text-lg uppercase font-semibold tracking-wide`}
+                } text-sm md:text-lg uppercase font-bold tracking-wide`}
             >
                 {subheadingText}
             </span>

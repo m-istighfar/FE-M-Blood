@@ -68,8 +68,8 @@ const FormComponent = ({
             </div>
           ))}
           <div className="md:col-span-2 flex justify-center">
-            <button type="submit" className="submit-button">
-              {buttonText}
+            <button type="submit" className="bg-red text-white font-sans py-2 px-4 rounded-full shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
+                    {buttonText}
             </button>
           </div>
         </form>
