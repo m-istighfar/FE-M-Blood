@@ -1,14 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
 import { format } from "date-fns";
+import { Pagination } from "flowbite-react";
 // import InitialDataFetching from "../../utility-functions/initial-data-fetching";
 
 export default function AdminDonateBlood() {
   const [data, setData] = useState([]);
   const [status, setStatus] = useState("normal");
   const [selectedId, setSelectedId] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(10);
+
   const [updatedData, setUpdatedData] = useState({
     name: "",
     phone: "",
@@ -16,46 +23,45 @@ export default function AdminDonateBlood() {
     message: "",
   });
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          console.error("No access token found. User must be logged in.");
-          return;
-        }
+  const fetchAppointments = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.error("No access token found. User must be logged in.");
+        return;
+      }
 
-        const response = await axios.get("http://localhost:3000/appointments", {
+      const response = await axios.get(
+        `http://localhost:3000/appointments?page=${currentPage}&limit=${limit}`,
+        {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        });
+        }
+      );
 
-        // Ubah format tanggal di sini
-        const formattedData = response.data.data.appointments.map(
-          (appointment) => ({
-            ...appointment,
-            ScheduledDate: format(
-              new Date(appointment.ScheduledDate),
-              "yyyy-MM-dd HH:mm:ss"
-            ),
-            BloodType: appointment.BloodType.Type, // Ganti BloodTypeID dengan BloodType.Type
-          })
-        );
+      // Ubah format tanggal di sini
+      const formattedData = response.data.data.appointments.map(
+        (appointment) => ({
+          ...appointment,
+          ScheduledDate: format(
+            new Date(appointment.ScheduledDate),
+            "yyyy-MM-dd HH:mm:ss"
+          ),
+          BloodType: appointment.BloodType.Type, // Ganti BloodTypeID dengan BloodType.Type
+        })
+      );
 
-        setData(formattedData); // Update state dengan data yang telah diubah format tanggal
-        console.log("Appointments fetched successfully:", response.data.data);
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-      }
-    };
-
-    fetchAppointments();
-  }, []);
+      setData(formattedData); // Update state dengan data yang telah diubah format tanggal
+      setTotalPages(response.data.data.totalPages);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  };
 
   useEffect(() => {
-    console.log("Current state data:", data);
-  }, [data]);
+    fetchAppointments();
+  }, [currentPage, limit]);
 
   const handleDonatedChange = (id) => {
     const item = data.find((item) => item.id === id);
@@ -121,7 +127,11 @@ export default function AdminDonateBlood() {
     "Location",
     "Status",
   ];
-
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
   return (
     <>
       <HeaderStats heading="Blood Donating Users" />
@@ -141,6 +151,14 @@ export default function AdminDonateBlood() {
             updatedData={updatedData}
             setUpdatedData={setUpdatedData}
           />
+          <div className="flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+              showIcons={true}
+            />
+          </div>
         </div>
       </div>
     </>
