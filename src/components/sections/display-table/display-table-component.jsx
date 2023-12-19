@@ -1,29 +1,26 @@
 /* eslint-disable react/prop-types */
 import PropTypes from "prop-types";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import getStyleForStatus from "../../utils/get-style-status";
 
 function DisplayTableComponent({
   tableHeader,
   data,
-  handleCheckboxChange,
   handleUpdateClick,
   handleDelete,
-  status,
-  setStatus,
-  selectedId,
-  setSelectedId,
-  updatedData,
-  setUpdatedData,
-  currentPage, // pass currentPage as a prop
-  limit, // pass limit as a prop
+  currentPage,
+  limit,
 }) {
-  // Fungsi untuk menampilkan baris tabel
+  // Function to display table rows
   const renderTableRows = (data) => {
     return data.map((item, index) => (
-      <tr key={item.AppointmentID} className="border-b">
+      <tr key={item.RequestID || item.AppointmentID} className="border-b">
         <td className="py-2 px-4">{(currentPage - 1) * limit + index + 1}</td>
         {tableHeader.slice(1).map((header) => (
-          <td key={header} className="py-2 px-4">
+          <td
+            key={header}
+            className={`py-2 px-4 ${getStyleForStatus(item[header])}`}
+          >
             {item[header]}
           </td>
         ))}
@@ -40,7 +37,7 @@ function DisplayTableComponent({
             onClick={() => handleDelete(item)}
             className="bg-red text-white px-2 py-1 rounded-md hover:bg-red-700"
           >
-            <TrashIcon className="w-5 h-5" /> {/* Ikon "Trash" */}
+            <TrashIcon className="w-5 h-5" />
           </button>
         </td>
       </tr>
@@ -52,7 +49,7 @@ function DisplayTableComponent({
       <table className="mt-10 shadow-lg bg-white w-full">
         <thead className="bg-dark p-4 text-off_white font-normal border border-dark">
           <tr>
-            {/* Menampilkan header tabel */}
+            {/* Display table headers */}
             {tableHeader.map((header, index) => (
               <th
                 className="px-4 py-4 font-normal text-[14px] text-start uppercase tracking-[.3em] border-rmd"
@@ -67,7 +64,7 @@ function DisplayTableComponent({
           </tr>
         </thead>
         <tbody className="border-b border-off_white">
-          {/* Menampilkan baris tabel */}
+          {/* Display table rows */}
           {renderTableRows(data)}
         </tbody>
       </table>
@@ -75,19 +72,14 @@ function DisplayTableComponent({
   );
 }
 
-// PropType untuk validasi properti
+// PropType validation
 DisplayTableComponent.propTypes = {
   tableHeader: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
-  handleCheckboxChange: PropTypes.func.isRequired,
   handleUpdateClick: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
-  status: PropTypes.string,
-  setStatus: PropTypes.func,
-  selectedId: PropTypes.any,
-  setSelectedId: PropTypes.func,
-  updatedData: PropTypes.object,
-  setUpdatedData: PropTypes.func,
+  currentPage: PropTypes.number.isRequired,
+  limit: PropTypes.number.isRequired,
 };
 
 export default DisplayTableComponent;
