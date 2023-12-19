@@ -4,7 +4,6 @@ import CardStats from "../../sections/cta-card/cta-card-component";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
 import { BiDonateBlood, BiHelpCircle } from "react-icons/bi";
 import { MdOutlineBloodtype } from "react-icons/md";
 import { MdOutlineVolunteerActivism } from "react-icons/md";
@@ -17,21 +16,11 @@ const Dashboard = () => {
 	const [data, setData] = useState([]);
 	const [filter, setFilter] = useState("");
 	const [selectedOpt, setSelectedOpt] = useState("name");
+	const [unauthorized, setUnauthorized] = useState(false);
 
 	useEffect(() => {
 		InitialDataFetching({ source: "dashboard", setData });
 	}, []);
-
-	// useEffect(() => {
-	// 	axios
-	// 		.get("http://localhost:3001/api/dashboard")
-	// 		.then((response) => {
-	// 			setData(response.data);
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error(error);
-	// 		});
-	// }, []);
 
 	const handleSearchChange = (e) => {
 		setFilter(e.target.value);

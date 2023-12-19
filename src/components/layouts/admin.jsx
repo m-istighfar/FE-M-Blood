@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from "react";
 import { Route, Routes, Navigate, Outlet } from "react-router-dom";
 

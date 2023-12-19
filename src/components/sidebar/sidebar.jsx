@@ -42,7 +42,7 @@ export default function Sidebar() {
 										className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left uppercase md:block md:pb-2 text-blue whitespace-nowrap"
 										to="/"
 									>
-										HemoCell
+										M Blood
 									</Link>
 								</div>
 								<div className="flex justify-end w-6/12">
@@ -173,6 +173,14 @@ export default function Sidebar() {
 
 						{/* Divider */}
 						<hr className="my-4 md:min-w-full" />
+					</div>
+					<div className="mt-4 mb-4">
+						<Link
+							to="/login"
+							className="bg-dark text-white text-[16px] py-3 font-bold block text-center hover:bg-blue hover:text-white transition-colors duration-300 rounded-rmd"
+						>
+							Login
+						</Link>
 					</div>
 				</div>
 			</nav>

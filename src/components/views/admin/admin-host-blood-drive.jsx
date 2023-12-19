@@ -1,211 +1,115 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
 import FilterableComponent from "../../sections/filterable/filterable-component";
-import InitialDataFetching from "../../utility-functions/initial-data-fetching";
 
 export default function AdminHostBloodDrive() {
-	const [data, setData] = useState([]);
-	const [filter, setFilter] = useState("");
-	const [selectedOpt, setSelectedOpt] = useState("name");
+    const [bloodDrives, setBloodDrives] = useState([]);
+    const [filter, setFilter] = useState("");
+    const [selectedOpt, setSelectedOpt] = useState("name");
+	const [unauthorized, setUnauthorized] = useState(false);
 
-	const [status, setStatus] = useState("normal");
-	const [selectedId, setSelectedId] = useState(null);
-	const [updatedData, setUpdatedData] = useState({
-		name: "",
-		phone: "",
-		institute: "",
-		designation: "",
-		city: "",
-		message: "",
-	});
+    useEffect(() => {
+        axios.get("http://localhost:3000/blood-drive")
+            .then(response => {
+                setBloodDrives(response.data.data.bloodDrives);
+                setUnauthorized(false);
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 401) {
+                    setUnauthorized(true);
+                } else {
+                    console.error("Error fetching blood drives:", error);
+                }
+            });
+    }, []);
 
-	useEffect(() => {
-		InitialDataFetching({ source: "host-blood-drive", setData });
-	}, []);
+    const filterData = () => {
+        if (unauthorized) {
+            return []; // Return empty array if unauthorized
+        }
+        if (selectedOpt === "all") {
+            return bloodDrives;
+        } else {
+            return bloodDrives.filter((drive) => 
+                drive[selectedOpt]?.toString().toLowerCase().includes(filter.toLowerCase())
+            );
+        }
+    };
 
-	// useEffect(() => {
-	// 	axios
-	// 		.get("http://localhost:3001/api/host-blood-drive")
-	// 		.then((response) => {
-	// 			setData(response.data);
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error(error);
-	// 		});
-	// }, []);
+    const handleSearchChange = (e) => {
+        setFilter(e.target.value);
+    };
 
-	useEffect(() => {
-		data.map((item) => {
-			if (item.id == selectedId) {
-				setUpdatedData({
-					name: item.name,
-					phone: item.phone,
-					institute: item.institute,
-					designation: item.designation,
-					city: item.city,
-					message: item.message,
-				});
-				// console.log("useEffect");
-			}
-		});
-	}, [selectedId]);
+    const handleInputChange = (e) => {
+        setSelectedOpt(e.target.value);
+    };
 
-	const filterData = (search) => {
-		return data.filter((item) => {
-			let matches = true;
+    const handleUpdateClick = (driveId, updatedDriveData) => {
+        axios.put(`http://localhost:3000/blood-drive/${driveId}`, updatedDriveData)
+            .then(response => {
+                const updatedDrives = bloodDrives.map(drive => 
+                    drive.DriveID === driveId ? { ...drive, ...updatedDriveData } : drive
+                );
+                setBloodDrives(updatedDrives);
+            })
+            .catch(error => {
+                console.error("Error updating blood drive:", error);
+            });
+    };
 
-			if (selectedOpt === "all") {
-				return true;
-			} else if (
-				selectedOpt === "done" &&
-				"no".toLowerCase().includes(search.toLowerCase()) &&
-				item.done === 0
-			) {
-				matches = true;
-			} else if (
-				selectedOpt === "done" &&
-				"yes".toLowerCase().includes(search.toLowerCase()) &&
-				item.done === 1
-			) {
-				matches = true;
-			} else if (
-				item[selectedOpt]
-					.toString()
-					.toLowerCase()
-					.includes(search.toLowerCase())
-			) {
-				matches = true;
-			} else {
-				matches = false;
-			}
-			return matches;
-		});
-	};
-
-	const handleSearchChange = (e) => {
-		setFilter(e.target.value);
-	};
-
-	const handleInputChange = (e) => {
-		setSelectedOpt(e.target.value);
-	};
-
-	const handleHostChange = (id) => {
-		const item = data.find((item) => item.id === id);
-		let status = !item.done;
-
-		axios
-			.put(`http://localhost:3001/api/host-blood-drive/done`, {
-				status,
-				id,
-			})
-			.then((response) => {
-				setData(
-					data.map((item) =>
-						item.id === id ? { ...item, done: status } : item
-					)
-				);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	};
-
-	const handleDelete = (id) => {
-		axios
-			.delete(`http://localhost:3001/api/host-blood-drive/delete/${id}`)
-			.then((response) => {
-				setData(data.filter((item) => item.id !== id));
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	};
-
-	const handleUpdateClick = (id) => {
-		axios
-			.put(`http://localhost:3001/api/host-blood-drive/update/${id}`, {
-				updatedData,
-			})
-			.then((response) => {
-				setData(
-					data.map((item) =>
-						item.id === id
-							? {
-									...item,
-									name: updatedData.name,
-									phone: updatedData.phone,
-									institute: updatedData.institute,
-									designation: updatedData.designation,
-									city: updatedData.city,
-									message: updatedData.message,
-							}
-							: item
-					)
-				);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	};
+    const handleDelete = (driveId) => {
+        axios.delete(`http://localhost:3000/blood-drive/${driveId}`)
+            .then(() => {
+                const updatedDrives = bloodDrives.filter(drive => drive.DriveID !== driveId);
+                setBloodDrives(updatedDrives);
+            })
+            .catch(error => {
+                console.error("Error deleting blood drive:", error);
+            });
+    };
 
 	const optionsData = [
 		{ id: 1, name: "All", value: "all" },
-		{ id: 2, name: "Name", value: "name" },
-		{ id: 3, name: "Phone", value: "phone" },
-		{ id: 4, name: "Email", value: "email" },
-		{ id: 5, name: "Institute", value: "institute" },
-		{ id: 6, name: "Designation", value: "designation" },
-		{ id: 7, name: "City", value: "city" },
-		{ id: 8, name: "Done", value: "done" },
+		{ id: 2, name: "Institute", value: "Institute" },
+		{ id: 3, name: "Designation", value: "Designation" },
+		{ id: 4, name: "City", value: "Province.Name" }, // Assuming you want to filter by city name
+		// Add more options if needed
 	];
 
 	const tableHeader = [
-		"Name",
-		"Email",
-		"Phone",
+		"Drive ID",
 		"Institute",
 		"Designation",
+		"Scheduled Date",
 		"City",
-		"Message",
-		"Done",
-		"Action",
+		"Created At",
+		"Updated At",
+		"Actions", // Actions like update, delete
 	];
 
 	return (
-		<>
-			<HeaderStats heading="Blood Drive Hosting Users" />
-			<div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
-				<FilterableComponent
-					filter={filter}
-					handleSearchChange={handleSearchChange}
-					optionsData={optionsData}
-					selectedOpt={selectedOpt}
-					handleInputChange={handleInputChange}
-				/>
+        <>
+            <HeaderStats heading="Blood Drive Hosting Users" />
+            <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
+                <FilterableComponent
+                    filter={filter}
+                    handleSearchChange={handleSearchChange}
+                    optionsData={optionsData}
+                    selectedOpt={selectedOpt}
+                    handleInputChange={handleInputChange}
+                />
 
-				<div className="overflow-x-scroll">
-					<DisplayTableComponent
-						tableHeader={tableHeader}
-						filterData={filterData}
-						filter={filter}
-						handleCheckboxChange={handleHostChange}
-						type={"host-blood-drive"}
-						handleUpdateClick={handleUpdateClick}
-						handleDelete={handleDelete}
-						status={status}
-						setStatus={setStatus}
-						selectedId={selectedId}
-						setSelectedId={setSelectedId}
-						updatedData={updatedData}
-						setUpdatedData={setUpdatedData}
-					/>
-				</div>
-			</div>
-		</>
-	);
+                <div className="overflow-x-scroll">
+                    <DisplayTableComponent
+                        tableHeader={tableHeader}
+                        filterData={filterData}
+                        // ... other props
+                    />
+                    {unauthorized && <p className="text-red-500">Unauthorized access. Please log in.</p>}
+                </div>
+            </div>
+        </>
+    );
 }
