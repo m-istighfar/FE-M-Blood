@@ -20,6 +20,20 @@ export default function AdminHostBloodDrive() {
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
     useState(false);
   const [driveToDelete, setDriveToDelete] = useState(null);
+  const [provinces, setProvinces] = useState([]);
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/province");
+        setProvinces(response.data.data);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    };
+
+    fetchProvinces();
+  }, []);
 
   const toastDuration = 3000;
 
@@ -217,37 +231,81 @@ export default function AdminHostBloodDrive() {
             <Modal.Body>
               <form onSubmit={handleUpdateBloodDrive}>
                 <div className="space-y-4">
-                  <input
-                    type="text"
-                    id="institute"
-                    value={driveToUpdate.Institute}
-                    onChange={(e) => handleChange(e, "Institute")}
-                    placeholder="Institute"
-                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                  <input
-                    type="text"
-                    id="provinceName"
-                    value={driveToUpdate.ProvinceName}
-                    onChange={(e) => handleChange(e, "ProvinceName")}
-                    placeholder="Province Name"
-                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                  <input
-                    type="text"
-                    id="designation"
-                    value={driveToUpdate.Designation}
-                    onChange={(e) => handleChange(e, "Designation")}
-                    placeholder="Designation"
-                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                  <input
-                    type="datetime-local"
-                    id="scheduledDate"
-                    value={driveToUpdate.ScheduledDate}
-                    onChange={(e) => handleChange(e, "ScheduledDate")}
-                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  />
+                  {/* Institute Input */}
+                  <div>
+                    <label
+                      htmlFor="institute"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Institute
+                    </label>
+                    <input
+                      type="text"
+                      id="institute"
+                      value={driveToUpdate.Institute}
+                      onChange={(e) => handleChange(e, "Institute")}
+                      placeholder="Institute"
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Province Dropdown */}
+                  <div>
+                    <label
+                      htmlFor="provinceName"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Province Name
+                    </label>
+                    <select
+                      id="provinceName"
+                      required
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      value={driveToUpdate.ProvinceName}
+                      onChange={(e) => handleChange(e, "ProvinceName")}
+                    >
+                      {provinces.map((province) => (
+                        <option key={province.ProvinceID} value={province.Name}>
+                          {province.Name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Designation Input */}
+                  <div>
+                    <label
+                      htmlFor="designation"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Designation
+                    </label>
+                    <input
+                      type="text"
+                      id="designation"
+                      value={driveToUpdate.Designation}
+                      onChange={(e) => handleChange(e, "Designation")}
+                      placeholder="Designation"
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Scheduled Date Input */}
+                  <div>
+                    <label
+                      htmlFor="scheduledDate"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Scheduled Date
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="scheduledDate"
+                      value={driveToUpdate.ScheduledDate}
+                      onChange={(e) => handleChange(e, "ScheduledDate")}
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                  </div>
                 </div>
                 <div className="mt-5 sm:mt-6">
                   <button
