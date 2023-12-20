@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -26,6 +25,8 @@ export default function AdminDonateBlood() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isError, setIsError] = useState(false);
+
+  const [isStatusChanged, setIsStatusChanged] = useState(false);
 
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
     useState(false);
@@ -120,11 +121,12 @@ export default function AdminDonateBlood() {
   };
 
   const handleDelete = (appointment) => {
+    console.log("Deleting appointment:", appointment);
     setAppointmentToDelete(appointment);
     setIsDeleteConfirmationOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     const accessToken = localStorage.getItem("accessToken");
 
     if (!accessToken) {
@@ -132,32 +134,37 @@ export default function AdminDonateBlood() {
       setToastMessage("User is not authenticated.");
       setIsError(true);
       setShowToast(true);
-      closeDeleteConfirmation(); // Close the delete confirmation modal
+      closeDeleteConfirmation();
       return;
     }
 
-    const id = appointmentToDelete.AppointmentID;
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/emergency/${appointmentToDelete.RequestID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-    axios
-      .delete(`http://localhost:3000/appointments/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then(() => {
-        setData(data.filter((item) => item.AppointmentID !== id));
-        setToastMessage("Appointment deleted successfully");
+      if (response.status === 200 || response.status === 204) {
+        setToastMessage("Emergency request deleted successfully.");
         setIsError(false);
-        setShowToast(true);
-        closeDeleteConfirmation(); // Close the delete confirmation modal
-      })
-      .catch((error) => {
-        console.error("Error deleting the appointment:", error);
-        setToastMessage("Error deleting appointment");
+      } else {
+        setToastMessage("Failed to delete the emergency request.");
         setIsError(true);
-        setShowToast(true);
-        closeDeleteConfirmation(); // Close the delete confirmation modal
-      });
+      }
+      setShowToast(true);
+      fetchAppointments(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting the emergency request:", error);
+      setToastMessage("Error occurred while deleting the emergency request.");
+      setIsError(true);
+      setShowToast(true);
+    } finally {
+      closeDeleteConfirmation();
+    }
   };
 
   const closeDeleteConfirmation = () => {
@@ -168,9 +175,17 @@ export default function AdminDonateBlood() {
   const handleUpdateClick = (appointment) => {
     setAppointmentToUpdate({
       ...appointment,
-      Status: appointment.Status || "pending", // Set a default status if not present
+      Status: "", // Gunakan string kosong atau nilai lain yang mengindikasikan tidak ada status yang dipilih
     });
     setIsModalOpen(true);
+  };
+
+  const handleStatusChange = (e) => {
+    setAppointmentToUpdate({
+      ...appointmentToUpdate,
+      Status: e.target.value.trim(),
+    });
+    setIsStatusChanged(true);
   };
 
   const handleUpdateAppointment = async (e) => {
@@ -182,10 +197,10 @@ export default function AdminDonateBlood() {
       setToastMessage("User is not authenticated.");
       setIsError(true);
       setShowToast(true);
+      setIsModalOpen(false); // Close the modal
       return;
     }
 
-    // Ensure that the status is one of the allowed values
     const allowedStatusValues = [
       "pending",
       "inProgress",
@@ -197,19 +212,16 @@ export default function AdminDonateBlood() {
       setToastMessage("Invalid status value. Please select a valid status.");
       setIsError(true);
       setShowToast(true);
+      // Do not close the modal here to allow the user to correct the input
       return;
     }
 
     try {
-      // Update the request payload to match the new API requirements
       const updatePayload = {
-        additionalInfo: appointmentToUpdate.AdditionalInfo,
-        bloodType: appointmentToUpdate.BloodType,
-        location: appointmentToUpdate.Location,
-        status: appointmentToUpdate.Status,
+        // ... Your existing payload data
       };
 
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:3000/emergency/${appointmentToUpdate.RequestID}`,
         updatePayload,
         {
@@ -219,23 +231,20 @@ export default function AdminDonateBlood() {
         }
       );
 
-      setToastMessage(
-        response.data.message || "Emergency request updated successfully"
-      );
+      setToastMessage("Emergency request updated successfully");
       setIsError(false);
       setShowToast(true);
       fetchAppointments(); // Refresh the list
     } catch (error) {
-      let errorMessage =
-        "An error occurred while updating the emergency request.";
+      let errorMessage = "Error occurred while updating the emergency request.";
       if (error.response && error.response.data && error.response.data.error) {
-        errorMessage = error.response.data.error;
+        errorMessage = error.response.data.error; // Gunakan pesan error dari server
       }
       setToastMessage(errorMessage);
       setIsError(true);
       setShowToast(true);
     } finally {
-      setIsModalOpen(false); // Close the modal regardless of the outcome
+      setIsModalOpen(false); // Close the modal
     }
   };
 
@@ -360,13 +369,10 @@ export default function AdminDonateBlood() {
                     required
                     className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     value={appointmentToUpdate.Status}
-                    onChange={(e) =>
-                      setAppointmentToUpdate({
-                        ...appointmentToUpdate,
-                        Status: e.target.value.trim(),
-                      })
-                    }
+                    onChange={handleStatusChange}
                   >
+                    <option value="">-- Select Status --</option>{" "}
+                    {/* Tambahkan ini */}
                     <option value="pending">Pending</option>
                     <option value="inProgress">In Progress</option>
                     <option value="fulfilled">Fulfilled</option>
