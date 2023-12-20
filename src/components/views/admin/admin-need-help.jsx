@@ -22,6 +22,29 @@ export default function AdminHelpOfferPage() {
     useState(false);
   const [offerToDelete, setOfferToDelete] = useState(null);
 
+  const [bloodTypes, setBloodTypes] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const bloodTypeResponse = await axios.get(
+          "http://localhost:3000/blood-type"
+        );
+        const provinceResponse = await axios.get(
+          "http://localhost:3000/province"
+        );
+
+        setBloodTypes(bloodTypeResponse.data.data);
+        setProvinces(provinceResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const toastDuration = 3000;
 
   useEffect(() => {
@@ -134,12 +157,13 @@ export default function AdminHelpOfferPage() {
         throw new Error("No access token found. User must be logged in.");
       }
 
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:3000/help-offer/${offerToUpdate.OfferID}`,
         {
           BloodType: offerToUpdate.bloodType,
           IsWillingToDonate: offerToUpdate.isWillingToDonate,
           CanHelpInEmergency: offerToUpdate.canHelpInEmergency,
+          Reason: offerToUpdate.reason,
           Location: offerToUpdate.location,
         },
         {
@@ -149,8 +173,12 @@ export default function AdminHelpOfferPage() {
         }
       );
 
-      setToastMessage("Help offer updated successfully");
+      setToastMessage(
+        response.data.message || "Help offer updated successfully"
+      );
       setIsError(false);
+      setShowToast(true);
+      fetchHelpOffers(); // Refresh the list
     } catch (error) {
       let errorMessage = "An error occurred while updating the help offer.";
       if (error.response && error.response.data && error.response.data.error) {
@@ -236,8 +264,7 @@ export default function AdminHelpOfferPage() {
                     >
                       Blood Type
                     </label>
-                    <input
-                      type="text"
+                    <select
                       id="bloodType"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -248,7 +275,13 @@ export default function AdminHelpOfferPage() {
                           BloodType: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {bloodTypes.map((type) => (
+                        <option key={type.BloodTypeID} value={type.Type}>
+                          {type.Type}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Willingness to Donate Field */}
@@ -301,10 +334,9 @@ export default function AdminHelpOfferPage() {
                       htmlFor="location"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Location
+                      Location (Province)
                     </label>
-                    <input
-                      type="text"
+                    <select
                       id="location"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -315,7 +347,13 @@ export default function AdminHelpOfferPage() {
                           Location: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {provinces.map((province) => (
+                        <option key={province.ProvinceID} value={province.Name}>
+                          {province.Name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6">
