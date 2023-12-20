@@ -117,25 +117,28 @@ export default function AdminHelpOfferPage() {
   };
 
   const handleUpdateClick = (offer) => {
-    setOfferToUpdate(offer);
+    setOfferToUpdate({
+      ...offer,
+      BloodType: offer.BloodType.Type, // Menggunakan string tipe darah
+    });
     setIsModalOpen(true);
   };
 
   const handleUpdateHelpOffer = async (e) => {
-    e.preventDefault(); // Prevent form from refreshing the page
+    e.preventDefault();
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
         throw new Error("No access token found. User must be logged in.");
       }
 
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:3000/help-offer/${offerToUpdate.OfferID}`,
         {
-          BloodType: { Type: offerToUpdate.bloodType }, // Update blood type
+          BloodType: offerToUpdate.bloodType,
           IsWillingToDonate: offerToUpdate.isWillingToDonate,
           CanHelpInEmergency: offerToUpdate.canHelpInEmergency,
-          Location: offerToUpdate.location, // Update location
+          Location: offerToUpdate.location,
         },
         {
           headers: {
@@ -144,12 +147,8 @@ export default function AdminHelpOfferPage() {
         }
       );
 
-      setToastMessage(
-        response.data.message || "Help offer updated successfully"
-      );
+      setToastMessage("Help offer updated successfully");
       setIsError(false);
-      setShowToast(true);
-      fetchHelpOffers(); // Refresh the list
     } catch (error) {
       let errorMessage = "An error occurred while updating the help offer.";
       if (error.response && error.response.data && error.response.data.error) {
@@ -157,8 +156,9 @@ export default function AdminHelpOfferPage() {
       }
       setToastMessage(errorMessage);
       setIsError(true);
-      setShowToast(true);
     } finally {
+      setShowToast(true);
+      fetchHelpOffers(); // Refresh the list
       setIsModalOpen(false); // Close the modal regardless of the outcome
     }
   };
@@ -226,6 +226,7 @@ export default function AdminHelpOfferPage() {
             <Modal.Body>
               <form onSubmit={handleUpdateHelpOffer}>
                 <div className="space-y-4">
+                  {/* Blood Type Field */}
                   <div>
                     <label
                       htmlFor="bloodType"
@@ -238,55 +239,61 @@ export default function AdminHelpOfferPage() {
                       id="bloodType"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={offerToUpdate.bloodType}
+                      value={offerToUpdate.BloodType || ""}
                       onChange={(e) =>
                         setOfferToUpdate({
                           ...offerToUpdate,
-                          bloodType: e.target.value,
+                          BloodType: e.target.value,
                         })
                       }
                     />
                   </div>
+
+                  {/* Willingness to Donate Field */}
                   <div>
+                    <label
+                      htmlFor="isWillingToDonate"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Is Willing To Donate
+                    </label>
                     <input
                       type="checkbox"
                       id="isWillingToDonate"
                       className="mt-1"
-                      checked={offerToUpdate.isWillingToDonate}
+                      checked={offerToUpdate.IsWillingToDonate || false}
                       onChange={(e) =>
                         setOfferToUpdate({
                           ...offerToUpdate,
-                          isWillingToDonate: e.target.checked,
+                          IsWillingToDonate: e.target.checked,
                         })
                       }
                     />
-                    <label
-                      htmlFor="isWillingToDonate"
-                      className="ml-2 text-sm font-medium text-gray-700"
-                    >
-                      Is Willing To Donate
-                    </label>
                   </div>
+
+                  {/* Can Help in Emergency Field */}
                   <div>
+                    <label
+                      htmlFor="canHelpInEmergency"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Can Help In Emergency
+                    </label>
                     <input
                       type="checkbox"
                       id="canHelpInEmergency"
                       className="mt-1"
-                      checked={offerToUpdate.canHelpInEmergency}
+                      checked={offerToUpdate.CanHelpInEmergency || false}
                       onChange={(e) =>
                         setOfferToUpdate({
                           ...offerToUpdate,
-                          canHelpInEmergency: e.target.checked,
+                          CanHelpInEmergency: e.target.checked,
                         })
                       }
                     />
-                    <label
-                      htmlFor="canHelpInEmergency"
-                      className="ml-2 text-sm font-medium text-gray-700"
-                    >
-                      Can Help In Emergency
-                    </label>
                   </div>
+
+                  {/* Location Field */}
                   <div>
                     <label
                       htmlFor="location"
@@ -299,11 +306,11 @@ export default function AdminHelpOfferPage() {
                       id="location"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={offerToUpdate.location}
+                      value={offerToUpdate.Location || ""}
                       onChange={(e) =>
                         setOfferToUpdate({
                           ...offerToUpdate,
-                          location: e.target.value,
+                          Location: e.target.value,
                         })
                       }
                     />
