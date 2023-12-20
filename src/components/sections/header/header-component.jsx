@@ -31,7 +31,7 @@ const HeaderComponent = () => {
     { name: "Need Blood", href: "/need-blood" },
     { name: "Donate Blood", href: "/donate-blood" },
     isUserLoggedIn
-      ? { name: "Logout", href: "/logout", action: handleLogout }
+      ? { name: "Logout", href: "/", action: handleLogout }
       : { name: "Login", href: "/login" }
   ];
 
@@ -70,7 +70,7 @@ const HeaderComponent = () => {
               key={item.name}
               to={item.href}
               onClick={item.action ? item.action : null}
-              className={`text-sm font-bold text-dark hover:bg-blue hover:text-off_white px-3 py-2 rounded-rsm ${location.pathname === item.href ? "bg-blue text-off_white" : ""}`}
+              className={`text-sm font-bold px-3 py-2 rounded-rmd ${location.pathname === item.href ? "bg-blue text-white" : "hover:bg-dark hover:text-white"} ${item.name === "Login" || item.name === "Logout" ? "bg-blue text-white" : ""}`}
             >
               {item.name}
             </NavLink>
@@ -97,7 +97,7 @@ const HeaderComponent = () => {
               key={item.name}
               to={item.href}
               onClick={item.action ? item.action : null}
-              className={`block px-3 py-2 text-lg font-bold leading-7 rounded-rsm hover:bg-blue hover:text-off_white ${location.pathname === item.href ? "bg-blue text-off_white" : "text-dark"}`}
+              className={`block px-3 py-2 text-lg font-bold leading-7 rounded-rmd ${location.pathname === item.href ? "bg-blue text-white" : "hover:bg-dark hover:text-white"} ${item.name === "Login" || item.name === "Logout" ? "bg-blue text-white" : "text-dark"}`}
             >
               {item.name}
             </NavLink>

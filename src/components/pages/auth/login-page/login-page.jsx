@@ -13,18 +13,26 @@ const LoginPage = () => {
     message: "",
   });
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
     try {
       const response = await loginUser(data);
+      // Store the access token and logged-in status
       localStorage.setItem("accessToken", response.data.accessToken);
-      console.log(response);
-      navigate("/");
+      localStorage.setItem("userLoggedIn", "true");  // Set user login status
+
+      setModalState({
+        isOpen: true,
+        type: "success",
+        message: "Login successful. Redirecting..."
+      });
+
+      // Redirect after a short delay to allow user to read message
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+
     } catch (error) {
       setModalState({
         isOpen: true,
@@ -36,6 +44,9 @@ const LoginPage = () => {
 
   const closeModal = () => {
     setModalState({ isOpen: false, type: "", message: "" });
+    if (modalState.type === "success") {
+      navigate("/");
+    }
   };
 
   return (

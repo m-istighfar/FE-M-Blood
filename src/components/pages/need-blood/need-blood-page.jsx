@@ -11,12 +11,16 @@ import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
 
 import axios from "axios";
-// import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const NeedBloodPage = () => {
   const [bloodTypes, setBloodTypes] = useState([]);
   const [provinces, setProvinces] = useState([]);
   const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const closeModal = () => setIsModalOpen(false);
+
   const {
     register,
     handleSubmit,
@@ -50,12 +54,15 @@ const NeedBloodPage = () => {
   const onSubmit = async (data) => {
     setFormStatus({ loading: true, message: "" });
     const accessToken = localStorage.getItem("accessToken");
+  
     if (!accessToken) {
-      console.error("No access token found. User must be logged in.");
-      setFormStatus({ loading: false, message: "User must be logged in." });
+      const loginErrorMessage = "User must be logged in.";
+      console.error(loginErrorMessage);
+      setModalState({ isOpen: true, type: 'error', message: loginErrorMessage });
+      setFormStatus({ loading: false });
       return;
     }
-
+  
     try {
       const response = await axios.post(
         "http://localhost:3000/emergency/request",
@@ -64,25 +71,21 @@ const NeedBloodPage = () => {
       );
       console.log("Emergency request submitted:", response.data);
       reset();
-      setFormStatus({
-        loading: false,
-        message: "Emergency request submitted successfully.",
-      });
+      setModalState({ isOpen: true, type: 'success', message: "Emergency request submitted successfully." });
     } catch (error) {
-      console.error("Error submitting emergency request:", error);
-
       let errorMessage = "Error submitting emergency request.";
       if (error.response && error.response.data && error.response.data.error) {
         errorMessage = error.response.data.error;
+      } else if (error.message) {
+        errorMessage = error.message;
       }
-
-      setFormStatus({
-        loading: false,
-        message: errorMessage,
-      });
+      console.error(errorMessage);
+      setModalState({ isOpen: true, type: 'error', message: errorMessage });
     }
+    setFormStatus({ loading: false });
   };
-
+  
+  
   const NeedBloodPageDetails = {
     quote: {
       classHint: "quote need-blood-quote",
@@ -184,13 +187,22 @@ const NeedBloodPage = () => {
       <HeaderComponent />
 
       <HeroComponent {...NeedBloodPageDetails.hero} />
+      {/* Modal for displaying submission result */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p>{modalMessage}</p>
+            <button onClick={closeModal} className="close-button">OK</button>
+          </div>
+        </div>
+      )}
       <FormComponent
         isLoading={formStatus.loading}
         fields={fields}
         heading={"Request For Emergency Blood"}
         buttonText={"Request Blood"}
         register={register}
-        handleSubmit={handleSubmit(onSubmit)}
+        onFormSubmit={handleSubmit(onSubmit)}
         errors={errors}
       />
       {formStatus.message && (

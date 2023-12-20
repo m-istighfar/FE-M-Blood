@@ -6,7 +6,6 @@ import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
-
 import axios from "axios";
 import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
@@ -45,41 +44,48 @@ const ContactPage = () => {
     fetchProvinces();
   }, []);
 
-  const onSubmit = async (data) => {
-    setFormStatus({ loading: true, message: "" });
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.error("No access token found. User must be logged in.");
-      setFormStatus({ loading: false, message: "User must be logged in." });
-      return;
-    }
-
-    data.isWillingToDonate = data.isWillingToDonate === "true";
-    data.canHelpInEmergency = data.canHelpInEmergency === "true";
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/help-offer/offer",
-        data,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      console.log("Help offer created successfully:", response.data);
-      reset();
-      setFormStatus({
-        loading: false,
-        message:
-          "Help offer created successfully. Thank you for your contribution!",
-      });
-    } catch (error) {
-      console.error("Error creating help offer:", error);
-      let errorMessage = "Error creating help offer.";
-      if (error.response && error.response.data && error.response.data.error) {
-        errorMessage = error.response.data.error;
+  const submitForm = async (data) => {
+    return new Promise(async (resolve, reject) => {
+      setFormStatus({ loading: true, message: "" });
+      const accessToken = localStorage.getItem("accessToken");
+  
+      if (!accessToken) {
+        console.error("No access token found. User must be logged in.");
+        setFormStatus({ loading: false, message: "Please log in to submit this form." });
+        reject("Unauthorized: User must be logged in.");
+        return;
       }
-      setFormStatus({ loading: false, message: errorMessage });
-    }
+  
+      data.isWillingToDonate = data.isWillingToDonate === "true";
+      data.canHelpInEmergency = data.canHelpInEmergency === "true";
+  
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/help-offer/offer",
+          data,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        console.log("Help offer created successfully:", response.data);
+        reset();
+        resolve(response.data); // Resolve the promise with response data
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          setFormStatus({ loading: false, message: "Unauthorized. Please log in again." });
+        } else {
+          console.error("Error creating help offer:", error);
+          let errorMessage = "Error creating help offer.";
+          if (error.response && error.response.data && error.response.data.error) {
+            errorMessage = error.response.data.error;
+          }
+          setFormStatus({ loading: false, message: errorMessage });
+        }
+        reject(error); // Reject the promise with error
+      }
+    });
   };
+  
+
+  const handleFormSubmission = handleSubmit(submitForm);
 
   const ContactPageDetails = {
     hero: {
@@ -178,7 +184,7 @@ const ContactPage = () => {
         isLoading={formStatus.loading}
         fields={fields}
         register={register}
-        handleSubmit={handleSubmit(onSubmit)}
+        onFormSubmit={handleFormSubmission}
         errors={errors}
         heading={"Want to Help? Let Us Know"}
         buttonText={"Submit"}
