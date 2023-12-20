@@ -24,6 +24,41 @@ export default function BloodInventoryAdmin() {
     useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
+  const [isNewInventoryModalOpen, setIsNewInventoryModalOpen] = useState(false);
+  const [newInventory, setNewInventory] = useState({
+    bloodTypeID: "",
+    quantity: "",
+    provinceID: "",
+  });
+
+  const [provinces, setProvinces] = useState([]);
+  const [bloodTypes, setBloodTypes] = useState([]);
+
+  useEffect(() => {
+    // Fetch provinces
+    const fetchProvinces = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/province");
+        setProvinces(response.data.data);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    };
+
+    // Fetch blood types
+    const fetchBloodTypes = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/blood-type");
+        setBloodTypes(response.data.data);
+      } catch (error) {
+        console.error("Error fetching blood types:", error);
+      }
+    };
+
+    fetchProvinces();
+    fetchBloodTypes();
+  }, []);
+
   const toastDuration = 3000;
 
   useEffect(() => {
@@ -160,6 +195,45 @@ export default function BloodInventoryAdmin() {
     }
   };
 
+  const handleNewInventorySubmit = async (e) => {
+    e.preventDefault();
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.error("No access token found. User must be logged in.");
+      return;
+    }
+
+    const payload = {
+      ...newInventory,
+      provinceID: parseInt(newInventory.provinceID, 10),
+      bloodTypeID: parseInt(newInventory.bloodTypeID, 10),
+      quantity: parseInt(newInventory.quantity, 10),
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/blood-inventory",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      setToastMessage("New blood inventory added successfully");
+      setIsError(false);
+      setShowToast(true);
+      fetchInventory(); // To refresh the inventory list
+      setIsNewInventoryModalOpen(false); // Close the modal
+    } catch (error) {
+      console.error("Error adding new inventory:", error);
+      setToastMessage("Error adding new inventory item");
+      setIsError(true);
+      setShowToast(true);
+    }
+  };
+
   const tableHeader = [
     "No.",
     "BloodType",
@@ -192,7 +266,12 @@ export default function BloodInventoryAdmin() {
             </button>
           </Toast>
         )}
-
+        <button
+          onClick={() => setIsNewInventoryModalOpen(true)}
+          className="bg-blue text-white p-2 rounded"
+        >
+          Create New Inventory
+        </button>
         <DisplayTableComponent
           tableHeader={tableHeader}
           data={inventory}
@@ -279,6 +358,110 @@ export default function BloodInventoryAdmin() {
                     className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
                   >
                     Update Item
+                  </button>
+                </div>
+              </form>
+            </Modal.Body>
+          </Modal>
+        )}
+        {isNewInventoryModalOpen && (
+          <Modal
+            show={isNewInventoryModalOpen}
+            onClose={() => setIsNewInventoryModalOpen(false)}
+          >
+            <Modal.Header>Create New Inventory Item</Modal.Header>
+            <Modal.Body>
+              <form onSubmit={handleNewInventorySubmit}>
+                {/* Blood Type ID Field */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="bloodType"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Blood Type
+                  </label>
+                  <select
+                    id="bloodType"
+                    required
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    value={newInventory.bloodTypeID}
+                    onChange={(e) =>
+                      setNewInventory({
+                        ...newInventory,
+                        bloodTypeID: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select Blood Type</option>
+                    {bloodTypes.map((type) => (
+                      <option key={type.BloodTypeID} value={type.BloodTypeID}>
+                        {type.Type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Quantity Field */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="quantity"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Quantity
+                  </label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    required
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    value={newInventory.quantity}
+                    onChange={(e) =>
+                      setNewInventory({
+                        ...newInventory,
+                        quantity: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                {/* Province ID Field */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="province"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Province
+                  </label>
+                  <select
+                    id="province"
+                    required
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    value={newInventory.provinceID}
+                    onChange={(e) =>
+                      setNewInventory({
+                        ...newInventory,
+                        provinceID: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select Province</option>
+                    {provinces.map((province) => (
+                      <option
+                        key={province.ProvinceID}
+                        value={province.ProvinceID}
+                      >
+                        {province.Name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                  >
+                    Submit
                   </button>
                 </div>
               </form>
