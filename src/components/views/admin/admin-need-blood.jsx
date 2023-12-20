@@ -74,14 +74,15 @@ export default function AdminDonateBlood() {
         Array.isArray(response.data.data.emergencyRequests) // Corrected data path
       ) {
         const formattedData = response.data.data.emergencyRequests.map(
-          (request) => ({
+          (request, index) => ({
             ...request,
+            No: (currentPage - 1) * limit + index + 1,
             RequestDate: format(
               new Date(request.RequestDate),
               "yyyy-MM-dd HH:mm:ss"
             ),
             BloodType: request.BloodType?.Type,
-            Status: formatStatus(request.Status), // Format the status
+            Status: formatStatus(request.Status),
           })
         );
 
@@ -249,12 +250,14 @@ export default function AdminDonateBlood() {
   };
 
   const tableHeader = [
+    "No.",
     "UserID",
     "BloodType",
     "RequestDate",
     "Location",
     "Status",
   ];
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
