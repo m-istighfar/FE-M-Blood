@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Modal } from "flowbite-react";
 
 export default function DeleteConfirmationModal({

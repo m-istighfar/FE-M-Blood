@@ -13,7 +13,7 @@ import formatStatus from "../../utils/format-status";
 
 export default function AdminDonateBlood() {
   const [data, setData] = useState([]);
-  const [status, setStatus] = useState("normal");
+  const [status, setStatus] = useState("pending");
   const [selectedId, setSelectedId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -166,37 +166,69 @@ export default function AdminDonateBlood() {
   };
 
   const handleUpdateClick = (appointment) => {
-    setAppointmentToUpdate(appointment);
+    setAppointmentToUpdate({
+      ...appointment,
+      Status: appointment.Status || "pending", // Set a default status if not present
+    });
     setIsModalOpen(true);
   };
 
   const handleUpdateAppointment = async (e) => {
-    const accessToken = localStorage.getItem("accessToken");
     e.preventDefault(); // Prevent form from refreshing the page
+
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.error("No access token found. User must be logged in.");
+      setToastMessage("User is not authenticated.");
+      setIsError(true);
+      setShowToast(true);
+      return;
+    }
+
+    // Ensure that the status is one of the allowed values
+    const allowedStatusValues = [
+      "pending",
+      "inProgress",
+      "fulfilled",
+      "expired",
+      "cancelled",
+    ];
+    if (!allowedStatusValues.includes(appointmentToUpdate.Status)) {
+      setToastMessage("Invalid status value. Please select a valid status.");
+      setIsError(true);
+      setShowToast(true);
+      return;
+    }
+
     try {
+      // Update the request payload to match the new API requirements
+      const updatePayload = {
+        additionalInfo: appointmentToUpdate.AdditionalInfo,
+        bloodType: appointmentToUpdate.BloodType,
+        location: appointmentToUpdate.Location,
+        status: appointmentToUpdate.Status,
+      };
+
       const response = await axios.put(
-        `http://localhost:3000/appointments/update/${appointmentToUpdate.AppointmentID}`,
-        {
-          bloodType: appointmentToUpdate.BloodType,
-          scheduledDate: appointmentToUpdate.ScheduledDate,
-          location: appointmentToUpdate.Location,
-          status: appointmentToUpdate.Status,
-        },
+        `http://localhost:3000/emergency/${appointmentToUpdate.RequestID}`,
+        updatePayload,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
       );
+
       setToastMessage(
-        response.data.message || "Appointment updated successfully"
+        response.data.message || "Emergency request updated successfully"
       );
       setIsError(false);
       setShowToast(true);
       fetchAppointments(); // Refresh the list
     } catch (error) {
-      let errorMessage = "An error occurred while updating the appointment.";
-      if (error.response && error.response.data.error) {
+      let errorMessage =
+        "An error occurred while updating the emergency request.";
+      if (error.response && error.response.data && error.response.data.error) {
         errorMessage = error.response.data.error;
       }
       setToastMessage(errorMessage);
@@ -272,10 +304,11 @@ export default function AdminDonateBlood() {
         />
         {appointmentToUpdate && (
           <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <Modal.Header>Update Appointment</Modal.Header>
+            <Modal.Header>Update Emergency Request</Modal.Header>
             <Modal.Body>
               <form onSubmit={handleUpdateAppointment}>
                 <div className="space-y-4">
+                  {/* Blood Type Input */}
                   <div>
                     <label
                       htmlFor="bloodType"
@@ -297,27 +330,7 @@ export default function AdminDonateBlood() {
                       }
                     />
                   </div>
-                  <div>
-                    <label
-                      htmlFor="scheduledDate"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Scheduled Date
-                    </label>
-                    <input
-                      type="datetime-local"
-                      id="scheduledDate"
-                      required
-                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={appointmentToUpdate.ScheduledDate}
-                      onChange={(e) =>
-                        setAppointmentToUpdate({
-                          ...appointmentToUpdate,
-                          ScheduledDate: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+                  {/* Location Input */}
                   <div>
                     <label
                       htmlFor="location"
@@ -339,30 +352,48 @@ export default function AdminDonateBlood() {
                       }
                     />
                   </div>
+                  {/* Status Dropdown */}
+                  {/* Status Dropdown */}
+                  {/* Status Dropdown */}
+                  <select
+                    id="status"
+                    required
+                    className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    value={appointmentToUpdate.Status}
+                    onChange={(e) =>
+                      setAppointmentToUpdate({
+                        ...appointmentToUpdate,
+                        Status: e.target.value.trim(),
+                      })
+                    }
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="fulfilled">Fulfilled</option>
+                    <option value="expired">Expired</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+
+                  {/* Additional Information Input */}
                   <div>
                     <label
-                      htmlFor="status"
+                      htmlFor="additionalInfo"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Status
+                      Additional Information
                     </label>
-                    <select
-                      id="status"
+                    <textarea
+                      id="additionalInfo"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={appointmentToUpdate.Status}
+                      value={appointmentToUpdate.AdditionalInfo}
                       onChange={(e) =>
                         setAppointmentToUpdate({
                           ...appointmentToUpdate,
-                          Status: e.target.value,
+                          AdditionalInfo: e.target.value,
                         })
                       }
-                    >
-                      <option value="scheduled">Scheduled</option>
-                      <option value="completed">Completed</option>
-                      <option value="cancelled">Cancelled</option>
-                      {/* Add more options as needed */}
-                    </select>
+                    />
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6">
@@ -370,7 +401,7 @@ export default function AdminDonateBlood() {
                     type="submit"
                     className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
                   >
-                    Update Appointment
+                    Update Request
                   </button>
                 </div>
               </form>
