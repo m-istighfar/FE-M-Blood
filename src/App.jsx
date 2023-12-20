@@ -19,6 +19,7 @@ import AdminDonateBlood from "../src/components/views/admin/admin-donate-blood";
 import AdminNeedBlood from "../src/components/views/admin/admin-need-blood";
 import AdminHostBloodDrive from "../src/components/views/admin/admin-host-blood-drive";
 import AdminNeedHelp from "../src/components/views/admin/admin-need-help";
+import BloodInventoryAdminPage from "./components/views/admin/admin-blood-inventory";
 
 export default function App() {
   return (
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="need-blood" element={<AdminNeedBlood />} />
           <Route path="host-blood-drive" element={<AdminHostBloodDrive />} />
           <Route path="need-help" element={<AdminNeedHelp />} />
+          <Route path="blood-inventory" element={<BloodInventoryAdminPage />} />
           {/* <Route path="/redirect" element={<Navigate to="/" />} /> */}
         </Route>
       </Routes>

@@ -12,8 +12,6 @@ import DeleteConfirmationModal from "../../utils/modal";
 
 export default function AdminDonateBlood() {
   const [data, setData] = useState([]);
-  const [status, setStatus] = useState("normal");
-  const [selectedId, setSelectedId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -42,13 +40,6 @@ export default function AdminDonateBlood() {
       return () => clearTimeout(timer);
     }
   }, [showToast, toastDuration]);
-
-  const [updatedData, setUpdatedData] = useState({
-    name: "",
-    phone: "",
-    bloodType: "",
-    message: "",
-  });
 
   const fetchAppointments = async () => {
     try {
@@ -89,27 +80,6 @@ export default function AdminDonateBlood() {
   useEffect(() => {
     fetchAppointments();
   }, [currentPage, limit]);
-
-  const handleDonatedChange = (id) => {
-    const item = data.find((item) => item.id === id);
-    let status = !item.donated;
-
-    axios
-      .put(`http://localhost:3001/api/donate-blood/donated`, {
-        status,
-        id,
-      })
-      .then((response) => {
-        setData(
-          data.map((item) =>
-            item.id === id ? { ...item, donated: status } : item
-          )
-        );
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
 
   const handleDelete = (appointment) => {
     setAppointmentToDelete(appointment);
@@ -235,16 +205,8 @@ export default function AdminDonateBlood() {
           <DisplayTableComponent
             tableHeader={tableHeader}
             data={data} // Pass the entire dataset
-            handleCheckboxChange={handleDonatedChange}
-            type={"donate-blood"}
             handleUpdateClick={handleUpdateClick}
             handleDelete={handleDelete}
-            status={status}
-            setStatus={setStatus}
-            selectedId={selectedId}
-            setSelectedId={setSelectedId}
-            updatedData={updatedData}
-            setUpdatedData={setUpdatedData}
             currentPage={currentPage}
             limit={limit}
           />
