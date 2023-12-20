@@ -14,7 +14,10 @@ function DisplayTableComponent({
   // Function to display table rows
   const renderTableRows = (data) => {
     return data.map((item, index) => (
-      <tr key={item.RequestID || item.AppointmentID} className="border-b">
+      <tr
+        key={item.RequestID || item.AppointmentID || item.DriveID}
+        className="border-b"
+      >
         <td className="py-2 px-4">{(currentPage - 1) * limit + index + 1}</td>
         {tableHeader.slice(1).map((header) => (
           <td
