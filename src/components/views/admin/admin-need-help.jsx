@@ -1,116 +1,327 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
-import FilterableComponent from "../../sections/filterable/filterable-component";
+import { Pagination, Modal, Toast } from "flowbite-react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import DeleteConfirmationModal from "../../utils/modal";
 
-export default function AdminNeedHelp() {
-    const [helpOffers, setHelpOffers] = useState([]);
-    const [filter, setFilter] = useState("");
-    const [selectedOpt, setSelectedOpt] = useState("location");
-	const [unauthorized, setUnauthorized] = useState(false);
+export default function AdminHelpOfferPage() {
+  const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [offerToUpdate, setOfferToUpdate] = useState({});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
+    useState(false);
+  const [offerToDelete, setOfferToDelete] = useState(null);
 
-    useEffect(() => {
-        axios.get("http://localhost:3000/help-offer")
-            .then(response => {
-                setHelpOffers(response.data.data.helpOffers);
-                setUnauthorized(false);
-            })
-            .catch(error => {
-                if (error.response && error.response.status === 401) {
-                    setUnauthorized(true);
-                } else {
-                    console.error("Error fetching help offers:", error);
-                }
-            });
-    }, []);
+  const toastDuration = 3000;
 
-    const filterData = () => {
-        if (unauthorized) {
-            return []; // Return empty array if unauthorized
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => setShowToast(false), toastDuration);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast, toastDuration]);
+
+  const fetchHelpOffers = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        console.error("No access token found. User must be logged in.");
+        return;
+      }
+
+      const response = await axios.get(
+        `http://localhost:3000/help-offer?page=${currentPage}&limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
-        return helpOffers.filter((offer) => {
-            if (selectedOpt === "all") {
-                return true;
-            } else {
-                return offer[selectedOpt]?.toString().toLowerCase().includes(filter.toLowerCase());
-            }
-        });
-    };
+      );
 
-    const handleSearchChange = (e) => {
-        setFilter(e.target.value);
-    };
+      const formattedData = response.data.data.helpOffers.map((offer) => ({
+        ...offer,
+        UserID: offer.UserID,
+        "Blood Type": offer.BloodType.Type,
+        "Donate?": offer.IsWillingToDonate ? "Yes" : "No",
+        "Emergency?": offer.CanHelpInEmergency ? "Yes" : "No",
+        Location: offer.Location,
+        Reason: offer.Reason,
+      }));
 
-    const handleInputChange = (e) => {
-        setSelectedOpt(e.target.value);
-    };
+      setData(formattedData);
+      setTotalPages(response.data.data.totalPages);
+    } catch (error) {
+      console.error("Error fetching help offers:", error);
+    }
+  };
 
-    const handleUpdateClick = (offerId, updatedOfferData) => {
-        axios.put(`http://localhost:3000/help-offer/${offerId}`, updatedOfferData)
-            .then(response => {
-                const updatedOffers = helpOffers.map(offer => 
-                    offer.OfferID === offerId ? { ...offer, ...updatedOfferData } : offer
-                );
-                setHelpOffers(updatedOffers);
-            })
-            .catch(error => {
-                console.error("Error updating help offer:", error);
-            });
-    };
+  useEffect(() => {
+    fetchHelpOffers();
+  }, [currentPage, limit]);
 
-    const handleDelete = (offerId) => {
-        axios.delete(`http://localhost:3000/help-offer/${offerId}`)
-            .then(() => {
-                const updatedOffers = helpOffers.filter(offer => offer.OfferID !== offerId);
-                setHelpOffers(updatedOffers);
-            })
-            .catch(error => {
-                console.error("Error deleting help offer:", error);
-            });
-    };
+  const handleDelete = (offer) => {
+    console.log("Offer to delete:", offer);
+    if (!offer.OfferID) {
+      console.error("OfferID is missing in the selected offer");
+      // Handle this situation appropriately
+      return;
+    }
+    setOfferToDelete(offer);
+    setIsDeleteConfirmationOpen(true);
+  };
 
-    const optionsData = [
-        { id: 1, name: "All", value: "all" },
-        { id: 2, name: "Location", value: "Location" },
-        { id: 3, name: "Blood Type", value: "BloodType.Type" },
-        // Add more options as needed
-    ];
+  const handleConfirmDelete = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        throw new Error("No access token found. User must be logged in.");
+      }
+      const offerId = offerToDelete.OfferID;
+      if (!offerId) {
+        console.error("No OfferID found for deletion.");
+        // Additional handling here, such as setting an error message
+        return;
+      }
 
-    const tableHeader = [
-        "Offer ID",
-        "User Name",
-        "Blood Type",
-        "Willing To Donate",
-        "Can Help In Emergency",
-        "Location",
-        "Reason",
-        "Actions", // Actions like update, delete
-    ];
+      const response = await axios.delete(
+        `http://localhost:3000/help-offer/${offerToDelete.OfferID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-    return (
-        <>
-            <HeaderStats heading="Help Offers" />
-            <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
-                <FilterableComponent
-                    filter={filter}
-                    handleSearchChange={handleSearchChange}
-                    optionsData={optionsData}
-                    selectedOpt={selectedOpt}
-                    handleInputChange={handleInputChange}
-                />
+      setToastMessage(
+        response.data.message || "Help offer deleted successfully"
+      );
+      setIsError(false);
+      setShowToast(true);
+      fetchHelpOffers(); // Refresh the list
+      setIsDeleteConfirmationOpen(false);
+    } catch (error) {
+      console.error("Error deleting the help offer:", error);
+      setToastMessage("Error deleting help offer");
+      setIsError(true);
+      setShowToast(true);
+      setIsDeleteConfirmationOpen(false);
+    }
+  };
 
-                <div className="overflow-x-scroll">
-                    <DisplayTableComponent
-                        tableHeader={tableHeader}
-                        filterData={filterData}
-                        handleUpdateClick={handleUpdateClick}
-                        handleDelete={handleDelete}
-                        // Pass other props as needed
+  const handleUpdateClick = (offer) => {
+    setOfferToUpdate(offer);
+    setIsModalOpen(true);
+  };
+
+  const handleUpdateHelpOffer = async (e) => {
+    e.preventDefault(); // Prevent form from refreshing the page
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        throw new Error("No access token found. User must be logged in.");
+      }
+
+      const response = await axios.put(
+        `http://localhost:3000/help-offer/${offerToUpdate.OfferID}`,
+        {
+          BloodType: { Type: offerToUpdate.bloodType }, // Update blood type
+          IsWillingToDonate: offerToUpdate.isWillingToDonate,
+          CanHelpInEmergency: offerToUpdate.canHelpInEmergency,
+          Location: offerToUpdate.location, // Update location
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      setToastMessage(
+        response.data.message || "Help offer updated successfully"
+      );
+      setIsError(false);
+      setShowToast(true);
+      fetchHelpOffers(); // Refresh the list
+    } catch (error) {
+      let errorMessage = "An error occurred while updating the help offer.";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+      setToastMessage(errorMessage);
+      setIsError(true);
+      setShowToast(true);
+    } finally {
+      setIsModalOpen(false); // Close the modal regardless of the outcome
+    }
+  };
+
+  const tableHeader = [
+    "No.",
+    "UserID",
+    "Blood Type",
+    "Donate?",
+    "Emergency?",
+    "Location",
+  ];
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  return (
+    <>
+      <HeaderStats heading="Help Offer Management" />
+      <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
+        <div className="overflow-x-scroll">
+          {showToast && (
+            <Toast
+              position="top-center"
+              onClose={() => setShowToast(false)}
+              title={isError ? "Error" : "Success"}
+              color={isError ? "failure" : "success"}
+              className="shadow-lg border-2 border-blue"
+            >
+              {toastMessage}
+              <button onClick={() => setShowToast(false)} className="text-red">
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </Toast>
+          )}
+          <DisplayTableComponent
+            tableHeader={tableHeader}
+            data={data}
+            handleUpdateClick={handleUpdateClick}
+            handleDelete={handleDelete}
+            currentPage={currentPage}
+            limit={limit}
+          />
+          <div className="flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+              showIcons={true}
+            />
+          </div>
+        </div>
+        <DeleteConfirmationModal
+          isOpen={isDeleteConfirmationOpen}
+          onClose={() => setIsDeleteConfirmationOpen(false)}
+          onConfirm={handleConfirmDelete}
+          message="Are you sure you want to delete this help offer?"
+        />
+        {offerToUpdate && (
+          <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <Modal.Header>Update Help Offer</Modal.Header>
+            <Modal.Body>
+              <form onSubmit={handleUpdateHelpOffer}>
+                <div className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="bloodType"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Blood Type
+                    </label>
+                    <input
+                      type="text"
+                      id="bloodType"
+                      required
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      value={offerToUpdate.bloodType}
+                      onChange={(e) =>
+                        setOfferToUpdate({
+                          ...offerToUpdate,
+                          bloodType: e.target.value,
+                        })
+                      }
                     />
-                    {unauthorized && <p className="text-red-500">Unauthorized access. Please log in.</p>}
+                  </div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="isWillingToDonate"
+                      className="mt-1"
+                      checked={offerToUpdate.isWillingToDonate}
+                      onChange={(e) =>
+                        setOfferToUpdate({
+                          ...offerToUpdate,
+                          isWillingToDonate: e.target.checked,
+                        })
+                      }
+                    />
+                    <label
+                      htmlFor="isWillingToDonate"
+                      className="ml-2 text-sm font-medium text-gray-700"
+                    >
+                      Is Willing To Donate
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      id="canHelpInEmergency"
+                      className="mt-1"
+                      checked={offerToUpdate.canHelpInEmergency}
+                      onChange={(e) =>
+                        setOfferToUpdate({
+                          ...offerToUpdate,
+                          canHelpInEmergency: e.target.checked,
+                        })
+                      }
+                    />
+                    <label
+                      htmlFor="canHelpInEmergency"
+                      className="ml-2 text-sm font-medium text-gray-700"
+                    >
+                      Can Help In Emergency
+                    </label>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="location"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      id="location"
+                      required
+                      className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      value={offerToUpdate.location}
+                      onChange={(e) =>
+                        setOfferToUpdate({
+                          ...offerToUpdate,
+                          location: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
-            </div>
-        </>
-    );
+                <div className="mt-5 sm:mt-6">
+                  <button
+                    type="submit"
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                  >
+                    Update Help Offer
+                  </button>
+                </div>
+              </form>
+            </Modal.Body>
+          </Modal>
+        )}
+      </div>
+    </>
+  );
 }

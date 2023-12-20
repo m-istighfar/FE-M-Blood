@@ -15,7 +15,13 @@ function DisplayTableComponent({
   const renderTableRows = (data) => {
     return data.map((item, index) => (
       <tr
-        key={item.RequestID || item.AppointmentID || item.DriveID}
+        key={
+          item.RequestID ||
+          item.AppointmentID ||
+          item.DriveID ||
+          item.OfferID ||
+          index
+        }
         className="border-b"
       >
         <td className="py-2 px-4">{(currentPage - 1) * limit + index + 1}</td>
