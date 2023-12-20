@@ -28,6 +28,32 @@ export default function AdminDonateBlood() {
     useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
+  const [bloodTypes, setBloodTypes] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+
+  // Fetch blood types and provinces on component mount
+  useEffect(() => {
+    const fetchDropdownData = async () => {
+      try {
+        // Fetch blood types
+        const bloodTypesResponse = await axios.get(
+          "http://localhost:3000/blood-type"
+        );
+        setBloodTypes(bloodTypesResponse.data.data);
+
+        // Fetch provinces
+        const provincesResponse = await axios.get(
+          "http://localhost:3000/province"
+        );
+        setProvinces(provincesResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching dropdown data:", error);
+      }
+    };
+
+    fetchDropdownData();
+  }, []);
+
   const toastDuration = 3000;
 
   useEffect(() => {
@@ -238,8 +264,7 @@ export default function AdminDonateBlood() {
                     >
                       Blood Type
                     </label>
-                    <input
-                      type="text"
+                    <select
                       id="bloodType"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -250,7 +275,13 @@ export default function AdminDonateBlood() {
                           BloodType: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {bloodTypes.map((type) => (
+                        <option key={type.BloodTypeID} value={type.Type}>
+                          {type.Type}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label
@@ -278,10 +309,9 @@ export default function AdminDonateBlood() {
                       htmlFor="location"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Location
+                      Location (Province)
                     </label>
-                    <input
-                      type="text"
+                    <select
                       id="location"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -292,7 +322,13 @@ export default function AdminDonateBlood() {
                           Location: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {provinces.map((province) => (
+                        <option key={province.ProvinceID} value={province.Name}>
+                          {province.Name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label
