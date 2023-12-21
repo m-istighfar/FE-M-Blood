@@ -25,6 +25,7 @@ const LoginPage = () => {
       // Store the access token and logged-in status
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("userLoggedIn", "true"); // Set user login status
+      localStorage.setItem("userRole", response.data.role);
 
       const userRole = response.data.role;
 
@@ -37,9 +38,9 @@ const LoginPage = () => {
       // Redirect after a short delay to allow user to read message
       setTimeout(() => {
         if (userRole === "admin") {
-          navigate("/admin");
+          window.location.replace("/admin");
         } else {
-          navigate("/");
+          window.location.replace("/");
         }
       }, 2000);
     } catch (error) {

@@ -22,6 +22,8 @@ import AdminNeedHelp from "../src/components/views/admin/admin-need-help";
 import BloodInventoryAdminPage from "./components/views/admin/admin-blood-inventory";
 import AdminDonationPage from "./components/views/admin/admin-donate-money";
 
+import AdminRoute from "./components/views/admin/admin-routes";
+
 export default function App() {
   return (
     <>
@@ -50,7 +52,14 @@ export default function App() {
         <Route path="/donate-blood" element={<DonateBloodPage />} />
         <Route path="/need-blood" element={<NeedBloodPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/admin" element={<Admin />}>
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="donate-blood" element={<AdminDonateBlood />} />
           <Route path="need-blood" element={<AdminNeedBlood />} />
