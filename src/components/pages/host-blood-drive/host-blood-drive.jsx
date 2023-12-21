@@ -9,6 +9,7 @@ import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-
 import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { Modal } from "flowbite-react";
 // import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -22,6 +23,11 @@ const HostBloodDrivePage = () => {
     reset,
     formState: { errors },
   } = useForm();
+  const [modalContent, setModalContent] = useState({
+    isVisible: false,
+    title: "",
+    body: "",
+  });
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -42,33 +48,44 @@ const HostBloodDrivePage = () => {
   }, []);
   const onSubmit = async (data) => {
     setFormStatus({ loading: true, message: "" });
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.error("No access token found. User must be logged in.");
-      setFormStatus({ loading: false, message: "User must be logged in." });
+    if (!localStorage.getItem("accessToken")) {
+      showModal("Error", "You must be logged in to submit this form.");
       return;
     }
     try {
-      const response = await axios.post(
-        `${BASE_URL}/blood-drive/create`,
-        data,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-      console.log("Blood drive created successfully:", response.data);
-      reset();
-      setFormStatus({
-        loading: false,
-        message:
-          "Blood drive created successfully. Thank you for your contribution!",
-      });
+      await submitForm(data);
     } catch (error) {
-      console.error("Error creating blood drive:", error);
-      let errorMessage = "Error creating blood drive.";
-      if (error.response && error.response.data && error.response.data.error) {
-        errorMessage = error.response.data.error;
-      }
-      setFormStatus({ loading: false, message: errorMessage });
+      handleSubmissionError(error);
     }
+  };
+
+  const submitForm = async (data) => {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.post(`${BASE_URL}/blood-drive/create`, data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    console.log("Blood drive created successfully:", response.data);
+    reset();
+    showModal(
+      "Success",
+      "Blood drive created successfully. Thank you for your contribution!"
+    );
+  };
+
+  const handleSubmissionError = (error) => {
+    let errorMessage = "Error creating blood drive.";
+    if (error.response?.data?.error) {
+      errorMessage = error.response.data.error;
+    }
+    showModal("Error", errorMessage);
+  };
+
+  const showModal = (title, body) => {
+    setModalContent({ isVisible: true, title, body });
+  };
+
+  const closeModal = () => {
+    setModalContent({ ...modalContent, isVisible: false });
   };
 
   const HostBloodDrivePageDetails = {
@@ -178,8 +195,13 @@ const HostBloodDrivePage = () => {
         heading={"Host a Blood Drive"}
         buttonText={"Submit Request"}
       />
-      {formStatus.message && (
-        <p className="error-message text-center">{formStatus.message}</p>
+      {modalContent.isVisible && (
+        <Modal show={modalContent.isVisible} onClose={closeModal}>
+          <Modal.Header>{modalContent.title}</Modal.Header>
+          <Modal.Body>
+            <p>{modalContent.body}</p>
+          </Modal.Body>
+        </Modal>
       )}
       <ThreeStepProcessComponent
         stepsText={HostBloodDrivePageDetails.stepsText}

@@ -1,1 +1,10 @@
-{"version":3,"sourceRoot":"","sources":["form-component-styles.scss"],"names":[],"mappings":"AAAA,cACI,qJAEA,8BAEA,2CACA,2BACA,UAGJ,kBACI,GACI,wBACA","file":"form-component-styles.css"}
+{
+  "version": 3,
+  "sourceRoot": "",
+  "sources": [
+    "form-component-styles.scss"
+  ],
+  "names": [],
+  "mappings": "AAAA,cACI,qJAEA,8BAEA,2CACA,2BACA,UAGJ,kBACI,GACI,wBACA",
+  "file": "form-component-styles.css"
+}

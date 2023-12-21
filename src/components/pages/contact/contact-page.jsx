@@ -1,4 +1,3 @@
-/* eslint-disable no-async-promise-executor */
 import { useState, useEffect } from "react";
 import HeroComponent from "../../sections/hero/hero-component";
 import FormComponent from "../../sections/form/form-component";
@@ -7,11 +6,10 @@ import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
+
 import axios from "axios";
 import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-
-const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ContactPage = () => {
   const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
@@ -28,7 +26,7 @@ const ContactPage = () => {
   useEffect(() => {
     const fetchBloodTypes = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/blood-type`);
+        const response = await axios.get("http://localhost:3000/blood-type");
         setBloodTypes(response.data.data);
       } catch (error) {
         console.error("Error fetching blood types:", error);
@@ -36,7 +34,7 @@ const ContactPage = () => {
     };
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/province`);
+        const response = await axios.get("http://localhost:3000/province");
         setProvinces(response.data.data);
       } catch (error) {
         console.error("Error fetching provinces:", error);
@@ -47,48 +45,41 @@ const ContactPage = () => {
     fetchProvinces();
   }, []);
 
-  const submitForm = async (data) => {
-    return new Promise(async (resolve, reject) => {
-      setFormStatus({ loading: true, message: "" });
-      const accessToken = localStorage.getItem("accessToken");
-  
-      if (!accessToken) {
-        console.error("No access token found. User must be logged in.");
-        setFormStatus({ loading: false, message: "Please log in to submit this form." });
-        reject("Unauthorized: User must be logged in.");
-        return;
-      }
-  
-      data.isWillingToDonate = data.isWillingToDonate === "true";
-      data.canHelpInEmergency = data.canHelpInEmergency === "true";
-  
-      try {
-        const response = await axios.post(
-          `${BASE_URL}/help-offer/offer`,
-          data,
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-        console.log("Help offer created successfully:", response.data);
-        reset();
-        resolve(response.data); // Resolve the promise with response data
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          setFormStatus({ loading: false, message: "Unauthorized. Please log in again." });
-        } else {
-          console.error("Error creating help offer:", error);
-          let errorMessage = "Error creating help offer.";
-          if (error.response && error.response.data && error.response.data.error) {
-            errorMessage = error.response.data.error;
-          }
-          setFormStatus({ loading: false, message: errorMessage });
-        }
-        reject(error); // Reject the promise with error
-      }
-    });
-  };
-  
+  const onSubmit = async (data) => {
+    setFormStatus({ loading: true, message: "" });
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      console.error("No access token found. User must be logged in.");
+      setFormStatus({ loading: false, message: "User must be logged in." });
+      return;
+    }
 
-  const handleFormSubmission = handleSubmit(submitForm);
+    data.isWillingToDonate = data.isWillingToDonate === "true";
+    data.canHelpInEmergency = data.canHelpInEmergency === "true";
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/help-offer/offer",
+        data,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      console.log("Help offer created successfully:", response.data);
+      reset();
+      setFormStatus({
+        loading: false,
+        message:
+          "Help offer created successfully. Thank you for your contribution!",
+      });
+    } catch (error) {
+      console.error("Error creating help offer:", error);
+      let errorMessage = "Error creating help offer.";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessage = error.response.data.error;
+      }
+      setFormStatus({ loading: false, message: errorMessage });
+    }
+  };
 
   const ContactPageDetails = {
     hero: {
@@ -187,7 +178,7 @@ const ContactPage = () => {
         isLoading={formStatus.loading}
         fields={fields}
         register={register}
-        onFormSubmit={handleFormSubmission}
+        handleSubmit={handleSubmit(onSubmit)}
         errors={errors}
         heading={"Want to Help? Let Us Know"}
         buttonText={"Submit"}
