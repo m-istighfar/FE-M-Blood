@@ -196,7 +196,7 @@ const ContactPage = () => {
       <HeaderComponent />
       <HeroComponent {...ContactPageDetails.hero} />
       <FormComponent
-        isLoading={modalContent.isVisible} // Use modalContent.isVisible for loading status
+        isLoading={modalContent.isVisible}
         fields={fields}
         register={register}
         handleSubmit={handleSubmit(onSubmit)}

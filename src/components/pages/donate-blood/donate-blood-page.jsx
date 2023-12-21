@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Modal } from "flowbite-react";
 import HeroComponent from "../../sections/hero/hero-component";
 import ThreeStepProcessComponent from "../../sections/three-step-process/three-step-process-component";
 import SideBySideComponent from "../../sections/side-by-side/side-by-side-component";
@@ -16,7 +17,11 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const DonateBloodPage = () => {
   const [bloodTypes, setBloodTypes] = useState([]);
   const [provinces, setProvinces] = useState([]);
-  const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
+  const [modalContent, setModalContent] = useState({
+    isVisible: false,
+    title: "",
+    body: "",
+  });
   const {
     register,
     handleSubmit,
@@ -25,62 +30,71 @@ const DonateBloodPage = () => {
   } = useForm();
 
   useEffect(() => {
-    const fetchBloodTypes = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/blood-type`);
-        setBloodTypes(response.data.data);
-      } catch (error) {
-        console.error("Error fetching blood types:", error);
-      }
-    };
-    const fetchProvinces = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/province`);
-        setProvinces(response.data.data);
-      } catch (error) {
-        console.error("Error fetching provinces:", error);
-      }
-    };
-
-    fetchBloodTypes();
-    fetchProvinces();
+    fetchData();
   }, []);
 
+  const fetchData = async () => {
+    await fetchBloodTypes();
+    await fetchProvinces();
+  };
+
+  const fetchBloodTypes = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/blood-type`);
+      setBloodTypes(response.data.data);
+    } catch (error) {
+      console.error("Error fetching blood types:", error);
+    }
+  };
+
+  const fetchProvinces = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/province`);
+      setProvinces(response.data.data);
+    } catch (error) {
+      console.error("Error fetching provinces:", error);
+    }
+  };
+
   const onSubmit = async (data) => {
-    setFormStatus({ loading: true, message: "" });
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      console.error("No access token found. User must be logged in.");
-      setFormStatus({ loading: false, message: "User must be logged in." });
+    if (!localStorage.getItem("accessToken")) {
+      showModal("Error", "You must be logged in to submit this form.");
       return;
     }
-
     try {
-      const response = await axios.post(
-        `${BASE_URL}/appointments/create`,
-        data,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-      console.log("Appointment created successfully:", response.data);
-      reset();
-      setFormStatus({
-        loading: false,
-        message:
-          "Appointment created successfully. Thank you for your willingness to donate blood!",
-      });
+      await submitAppointment(data);
     } catch (error) {
-      console.error("Error creating appointment:", error);
-
-      let errorMessage = "Error creating appointment.";
-      if (error.response && error.response.data && error.response.data.error) {
-        errorMessage = error.response.data.error;
-      }
-
-      setFormStatus({
-        loading: false,
-        message: errorMessage,
-      });
+      handleSubmissionError(error);
     }
+  };
+
+  const submitAppointment = async (data) => {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await axios.post(`${BASE_URL}/appointments/create`, data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    console.log("Appointment created successfully:", response.data);
+    reset();
+    showModal(
+      "Success",
+      "Appointment created successfully. Thank you for your willingness to donate blood!"
+    );
+  };
+
+  const handleSubmissionError = (error) => {
+    let errorMessage = "Error creating appointment.";
+    if (error.response?.data?.error) {
+      errorMessage = error.response.data.error;
+    }
+    showModal("Error", errorMessage);
+  };
+
+  const showModal = (title, body) => {
+    setModalContent({ isVisible: true, title, body });
+  };
+
+  const closeModal = () => {
+    setModalContent({ ...modalContent, isVisible: false });
   };
 
   const DonateBloodPageDetails = {
@@ -193,7 +207,7 @@ const DonateBloodPage = () => {
 
       <HeroComponent {...DonateBloodPageDetails.hero} />
       <FormComponent
-        isLoading={formStatus.loading}
+        isLoading={false}
         fields={fields}
         register={register}
         handleSubmit={handleSubmit(onSubmit)}
@@ -201,9 +215,15 @@ const DonateBloodPage = () => {
         heading={"Schedule an Appointment"}
         buttonText={"Schedule Now"}
       />
-      {formStatus.message && (
-        <p className="error-message text-center">{formStatus.message}</p>
+      {modalContent.isVisible && (
+        <Modal show={modalContent.isVisible} onClose={closeModal}>
+          <Modal.Header>{modalContent.title}</Modal.Header>
+          <Modal.Body>
+            <p>{modalContent.body}</p>
+          </Modal.Body>
+        </Modal>
       )}
+
       <ThreeStepProcessComponent
         stepsText={DonateBloodPageDetails.stepsText}
         stepDetails={stepDetails}
