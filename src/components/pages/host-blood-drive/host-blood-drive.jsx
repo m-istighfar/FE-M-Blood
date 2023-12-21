@@ -16,7 +16,6 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const HostBloodDrivePage = () => {
   const [provinces, setProvinces] = useState([]);
-  const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
   const {
     register,
     handleSubmit,
@@ -30,24 +29,20 @@ const HostBloodDrivePage = () => {
   });
 
   useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/province`);
-        setProvinces(response.data.data);
-      } catch (error) {
-        console.error("Error fetching provinces:", error);
-
-        setFormStatus({
-          loading: false,
-          message: "Unable to fetch provinces. Please try again later.",
-        });
-      }
-    };
-
     fetchProvinces();
   }, []);
+
+  const fetchProvinces = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/province`);
+      setProvinces(response.data.data);
+    } catch (error) {
+      console.error("Error fetching provinces:", error);
+      showModal("Error", "Unable to fetch provinces. Please try again later.");
+    }
+  };
+
   const onSubmit = async (data) => {
-    setFormStatus({ loading: true, message: "" });
     if (!localStorage.getItem("accessToken")) {
       showModal("Error", "You must be logged in to submit this form.");
       return;
@@ -187,7 +182,7 @@ const HostBloodDrivePage = () => {
       <HeaderComponent />
       <HeroComponent {...HostBloodDrivePageDetails.hero} />
       <FormComponent
-        isLoading={formStatus.loading}
+        isLoading={modalContent.isVisible}
         fields={fields}
         register={register}
         handleSubmit={handleSubmit(onSubmit)}
