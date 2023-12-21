@@ -20,11 +20,15 @@ function DisplayTableComponent({
           item.AppointmentID ||
           item.DriveID ||
           item.OfferID ||
+          item.DonationID ||
           index
         }
         className="border-b"
       >
-        <td className="py-2 px-4">{(currentPage - 1) * limit + index + 1}</td>
+        <td className="py-2 px-4">
+          {(currentPage ? currentPage - 1 : 0) * (limit || 10) + index + 1}
+        </td>
+
         {tableHeader.slice(1).map((header) => (
           <td
             key={header}

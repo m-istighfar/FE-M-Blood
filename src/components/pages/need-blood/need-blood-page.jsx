@@ -54,15 +54,19 @@ const NeedBloodPage = () => {
   const onSubmit = async (data) => {
     setFormStatus({ loading: true, message: "" });
     const accessToken = localStorage.getItem("accessToken");
-  
+
     if (!accessToken) {
       const loginErrorMessage = "User must be logged in.";
       console.error(loginErrorMessage);
-      setModalState({ isOpen: true, type: 'error', message: loginErrorMessage });
+      setModalState({
+        isOpen: true,
+        type: "error",
+        message: loginErrorMessage,
+      });
       setFormStatus({ loading: false });
       return;
     }
-  
+
     try {
       const response = await axios.post(
         "http://localhost:3000/emergency/request",
@@ -71,7 +75,11 @@ const NeedBloodPage = () => {
       );
       console.log("Emergency request submitted:", response.data);
       reset();
-      setModalState({ isOpen: true, type: 'success', message: "Emergency request submitted successfully." });
+      setModalState({
+        isOpen: true,
+        type: "success",
+        message: "Emergency request submitted successfully.",
+      });
     } catch (error) {
       let errorMessage = "Error submitting emergency request.";
       if (error.response && error.response.data && error.response.data.error) {
@@ -80,12 +88,11 @@ const NeedBloodPage = () => {
         errorMessage = error.message;
       }
       console.error(errorMessage);
-      setModalState({ isOpen: true, type: 'error', message: errorMessage });
+      setModalState({ isOpen: true, type: "error", message: errorMessage });
     }
     setFormStatus({ loading: false });
   };
-  
-  
+
   const NeedBloodPageDetails = {
     quote: {
       classHint: "quote need-blood-quote",
@@ -192,7 +199,9 @@ const NeedBloodPage = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <p>{modalMessage}</p>
-            <button onClick={closeModal} className="close-button">OK</button>
+            <button onClick={closeModal} className="close-button">
+              OK
+            </button>
           </div>
         </div>
       )}

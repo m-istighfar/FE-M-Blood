@@ -32,7 +32,7 @@ const HeaderComponent = () => {
     { name: "Donate Blood", href: "/donate-blood" },
     isUserLoggedIn
       ? { name: "Logout", href: "/", action: handleLogout }
-      : { name: "Login", href: "/login" }
+      : { name: "Login", href: "/login" },
   ];
 
   useEffect(() => {
@@ -49,16 +49,27 @@ const HeaderComponent = () => {
   }, [blurActivation]);
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 border-b border-dark_gray ${blurActivation ? "bg-white/80 backdrop-blur-md shadow-md" : ""}`}>
+    <header
+      className={`fixed inset-x-0 top-0 z-50 border-b border-dark_gray ${
+        blurActivation ? "bg-white/80 backdrop-blur-md shadow-md" : ""
+      }`}
+    >
       <nav className="flex items-center justify-between p-4 lg:px-8 max-w-7xl mx-auto">
         {/* Logo */}
         <a href="/" className="-m-1.5 p-1.5">
-          <img className="w-auto h-12 lg:h-20" src={blurActivation ? BlackLogo : WhiteLogo} alt={companyName} />
+          <img
+            className="w-auto h-12 lg:h-20"
+            src={blurActivation ? BlackLogo : WhiteLogo}
+            alt={companyName}
+          />
         </a>
 
         {/* Mobile menu button */}
         <div className="flex lg:hidden">
-          <button onClick={() => setMobileMenuOpen(true)} className="-m-2.5 p-2.5 text-dark">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="-m-2.5 p-2.5 text-dark"
+          >
             <Bars3Icon className="w-6 h-6" aria-hidden="true" />
           </button>
         </div>
@@ -70,7 +81,15 @@ const HeaderComponent = () => {
               key={item.name}
               to={item.href}
               onClick={item.action ? item.action : null}
-              className={`text-sm font-bold px-3 py-2 rounded-rmd ${location.pathname === item.href ? "bg-blue text-white" : "hover:bg-dark hover:text-white"} ${item.name === "Login" || item.name === "Logout" ? "bg-blue text-white" : ""}`}
+              className={`text-sm font-bold px-3 py-2 rounded-md ${
+                location.pathname === item.href
+                  ? "bg-blue text-white"
+                  : "hover:bg-dark hover:text-white"
+              } ${
+                item.name === "Login" || item.name === "Logout"
+                  ? "bg-red text-white"
+                  : ""
+              }`}
             >
               {item.name}
             </NavLink>
@@ -87,26 +106,37 @@ const HeaderComponent = () => {
             <a href="/">
               <img className="w-auto h-12" src={BlackLogo} alt={companyName} />
             </a>
-            <button onClick={() => setMobileMenuOpen(false)} className="-m-2.5 p-2.5 text-dark">
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="-m-2.5 p-2.5 text-dark"
+            >
               <XMarkIcon className="w-6 h-6" aria-hidden="true" />
             </button>
           </div>
           <div className="mt-6">
             {navigation.map((item) => (
               <NavLink
-              key={item.name}
-              to={item.href}
-              onClick={item.action ? item.action : null}
-              className={`block px-3 py-2 text-lg font-bold leading-7 rounded-rmd ${location.pathname === item.href ? "bg-blue text-white" : "hover:bg-dark hover:text-white"} ${item.name === "Login" || item.name === "Logout" ? "bg-blue text-white" : "text-dark"}`}
-            >
-              {item.name}
-            </NavLink>
-          ))}
-        </div>
-      </Dialog.Panel>
-    </Dialog>
-  </header>
-);
+                key={item.name}
+                to={item.href}
+                onClick={item.action ? item.action : null}
+                className={`block px-3 py-2 text-lg font-bold leading-7 rounded-rmd ${
+                  location.pathname === item.href
+                    ? "bg-blue text-white"
+                    : "hover:bg-dark hover:text-white"
+                } ${
+                  item.name === "Login" || item.name === "Logout"
+                    ? "bg-blue text-blue"
+                    : "text-dark"
+                }`}
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+    </header>
+  );
 };
 
 export default HeaderComponent;
