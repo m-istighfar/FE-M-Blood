@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [totalHelpOffers, setTotalHelpOffers] = useState(0);
   const [totalBloodDrives, setTotalBloodDrives] = useState(0);
   const [totalDonations, setTotalDonations] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -53,10 +54,6 @@ const Dashboard = () => {
       }
     };
 
-    const renderNumber = (number) => {
-      return number !== undefined ? number.toLocaleString() : "Loading...";
-    };
-
     const fetchData = async (url, setter) => {
       try {
         const accessToken = localStorage.getItem("accessToken");
@@ -82,6 +79,7 @@ const Dashboard = () => {
     fetchData("http://localhost:3000/help-offer", setTotalHelpOffers);
     fetchData("http://localhost:3000/blood-drive", setTotalBloodDrives);
     fetchData("http://localhost:3000/total-donations", setTotalDonations);
+    fetchData("http://localhost:3000/user/list-users", setTotalUsers);
   }, [currentPage, limit]);
 
   const cardData = [
@@ -124,11 +122,28 @@ const Dashboard = () => {
     {
       key: 555,
       statSubtitle: "DONATIONS",
-      statTitle: totalDonations?.toLocaleString() || "Loading...",
+      statTitle:
+        totalDonations || totalDonations === 0
+          ? `${totalDonations.toLocaleString("id-ID", {
+              style: "currency",
+              currency: "IDR",
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}`
+          : "Loading...",
       statArrow: "down",
       statPercent: "2.19",
       statIconName: <BiHelpCircle />,
       to: "/admin/donate-money",
+    },
+    {
+      key: 666,
+      statSubtitle: "USERS",
+      statTitle: totalUsers?.toLocaleString() || "Loading...",
+      statArrow: "down",
+      statPercent: "2.19",
+      statIconName: <BiHelpCircle />,
+      to: "/admin",
     },
   ];
 
