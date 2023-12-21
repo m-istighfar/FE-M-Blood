@@ -1,3 +1,4 @@
+/* eslint-disable no-async-promise-executor */
 import { useState, useEffect } from "react";
 import HeroComponent from "../../sections/hero/hero-component";
 import FormComponent from "../../sections/form/form-component";
@@ -9,6 +10,8 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ContactPage = () => {
   const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
@@ -25,7 +28,7 @@ const ContactPage = () => {
   useEffect(() => {
     const fetchBloodTypes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/blood-type");
+        const response = await axios.get(`${BASE_URL}/blood-type`);
         setBloodTypes(response.data.data);
       } catch (error) {
         console.error("Error fetching blood types:", error);
@@ -33,7 +36,7 @@ const ContactPage = () => {
     };
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/province");
+        const response = await axios.get(`${BASE_URL}/province`);
         setProvinces(response.data.data);
       } catch (error) {
         console.error("Error fetching provinces:", error);
@@ -61,7 +64,7 @@ const ContactPage = () => {
   
       try {
         const response = await axios.post(
-          "http://localhost:3000/help-offer/offer",
+          `${BASE_URL}/help-offer/offer`,
           data,
           { headers: { Authorization: `Bearer ${accessToken}` } }
         );

@@ -9,8 +9,9 @@ import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
-
 import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const DonateMoneyPage = () => {
   const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
@@ -33,7 +34,7 @@ const DonateMoneyPage = () => {
 
   const fetchTotalDonations = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/total-donations");
+      const response = await axios.get(`${BASE_URL}/total-donations`);
       setTotalDonations(response.data.totalDonations || "0");
     } catch (error) {
       console.error("Error fetching total donations:", error);
@@ -45,7 +46,7 @@ const DonateMoneyPage = () => {
     setFormStatus({ loading: true, message: "" });
 
     try {
-      const response = await axios.post("http://localhost:3000/donate", data);
+      const response = await axios.post(`${BASE_URL}/donate`, data);
       if (response.data.snapToken) {
         window.snap.pay(response.data.snapToken);
       }

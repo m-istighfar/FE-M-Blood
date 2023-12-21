@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
@@ -6,6 +7,8 @@ import { format } from "date-fns";
 import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function AdminHostBloodDrive() {
   const [data, setData] = useState([]);
@@ -25,7 +28,7 @@ export default function AdminHostBloodDrive() {
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/province");
+        const response = await axios.get(`${BASE_URL}/province`);
         setProvinces(response.data.data);
       } catch (error) {
         console.error("Error fetching provinces:", error);
@@ -53,7 +56,7 @@ export default function AdminHostBloodDrive() {
       }
 
       const response = await axios.get(
-        `http://localhost:3000/blood-drive?page=${currentPage}&limit=${limit}`,
+        `${BASE_URL}/blood-drive?page=${currentPage}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -94,7 +97,7 @@ export default function AdminHostBloodDrive() {
       }
 
       const response = await axios.delete(
-        `http://localhost:3000/blood-drive/${driveToDelete.DriveID}`,
+        `${BASE_URL}/blood-drive/${driveToDelete.DriveID}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -132,7 +135,7 @@ export default function AdminHostBloodDrive() {
       }
 
       const response = await axios.put(
-        `http://localhost:3000/blood-drive/${driveToUpdate.DriveID}`,
+        `${BASE_URL}/blood-drive/${driveToUpdate.DriveID}`,
         {
           institute: driveToUpdate.Institute,
           provinceName: driveToUpdate.ProvinceName,

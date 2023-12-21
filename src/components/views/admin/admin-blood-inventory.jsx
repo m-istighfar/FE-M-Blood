@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
@@ -6,6 +8,8 @@ import { format } from "date-fns";
 import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function BloodInventoryAdmin() {
   const [inventory, setInventory] = useState([]);
@@ -38,7 +42,7 @@ export default function BloodInventoryAdmin() {
     // Fetch provinces
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/province");
+        const response = await axios.get(`${BASE_URL}/province`);
         setProvinces(response.data.data);
       } catch (error) {
         console.error("Error fetching provinces:", error);
@@ -48,7 +52,7 @@ export default function BloodInventoryAdmin() {
     // Fetch blood types
     const fetchBloodTypes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/blood-type");
+        const response = await axios.get(`${BASE_URL}/blood-type`);
         setBloodTypes(response.data.data);
       } catch (error) {
         console.error("Error fetching blood types:", error);
@@ -79,7 +83,7 @@ export default function BloodInventoryAdmin() {
       }
 
       const response = await axios.get(
-        `http://localhost:3000/blood-inventory?page=${currentPage}&limit=${limit}`,
+        `${BASE_URL}/blood-inventory?page=${currentPage}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -125,7 +129,7 @@ export default function BloodInventoryAdmin() {
     const id = itemToDelete.InventoryID;
 
     try {
-      await axios.delete(`http://localhost:3000/blood-inventory/${id}`, {
+      await axios.delete(`${BASE_URL}/blood-inventory/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -169,7 +173,7 @@ export default function BloodInventoryAdmin() {
 
     try {
       await axios.put(
-        `http://localhost:3000/blood-inventory/${itemToUpdate.InventoryID}`,
+        `${BASE_URL}/blood-inventory/${itemToUpdate.InventoryID}`,
         {
           Quantity: itemToUpdate.quantity,
           ExpiryDate: itemToUpdate.expiryDate,
@@ -212,7 +216,7 @@ export default function BloodInventoryAdmin() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/blood-inventory",
+        `${BASE_URL}/blood-inventory`,
         payload,
         {
           headers: {

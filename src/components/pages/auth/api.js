@@ -1,8 +1,9 @@
 import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const fetchProvinces = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/province");
+    const response = await axios.get(`${BASE_URL}/province`);
     return response.data.data;
   } catch (error) {
     console.error("Error fetching provinces:", error);
@@ -13,7 +14,7 @@ export const fetchProvinces = async () => {
 export const registerUser = async (userData) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/auth/register",
+      `${BASE_URL}/auth/register`,
       userData,
       {
         headers: { "Content-Type": "application/json" },
@@ -29,7 +30,7 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/auth/login",
+      `${BASE_URL}/auth/login`,
       credentials,
       {
         headers: { "Content-Type": "application/json" },
@@ -45,7 +46,7 @@ export const loginUser = async (credentials) => {
 export const requestPasswordReset = async (emailData) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/auth/request-password-reset",
+      `${BASE_URL}/auth/request-password-reset`,
       emailData,
       {
         headers: { "Content-Type": "application/json" },
@@ -65,7 +66,7 @@ export const resetPassword = async (
 ) => {
   try {
     const response = await axios.post(
-      `http://localhost:3000/auth/reset-password/${resetToken}`,
+      `${BASE_URL}/auth/reset-password/${resetToken}`,
       {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
@@ -84,7 +85,7 @@ export const resetPassword = async (
 export const fetchBloodInventoryByProvince = async (provinceName) => {
   try {
     const response = await axios.get(
-      `http://localhost:3000/blood-inventory/total?provinceName=${provinceName}`
+      `${BASE_URL}/blood-inventory/total?provinceName=${provinceName}`
     );
     return response.data.data;
   } catch (error) {

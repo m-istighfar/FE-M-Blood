@@ -9,8 +9,9 @@ import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
-
 import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const DonateBloodPage = () => {
   const [bloodTypes, setBloodTypes] = useState([]);
@@ -26,7 +27,7 @@ const DonateBloodPage = () => {
   useEffect(() => {
     const fetchBloodTypes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/blood-type");
+        const response = await axios.get(`${BASE_URL}/blood-type`);
         setBloodTypes(response.data.data);
       } catch (error) {
         console.error("Error fetching blood types:", error);
@@ -34,7 +35,7 @@ const DonateBloodPage = () => {
     };
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/province");
+        const response = await axios.get(`${BASE_URL}/province`);
         setProvinces(response.data.data);
       } catch (error) {
         console.error("Error fetching provinces:", error);
@@ -56,7 +57,7 @@ const DonateBloodPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/appointments/create",
+        `${BASE_URL}/appointments/create`,
         data,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );

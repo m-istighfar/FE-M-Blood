@@ -8,6 +8,8 @@ import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export default function AdminHelpOfferPage() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,10 +31,10 @@ export default function AdminHelpOfferPage() {
     const fetchData = async () => {
       try {
         const bloodTypeResponse = await axios.get(
-          "http://localhost:3000/blood-type"
+          `${BASE_URL}/blood-type`
         );
         const provinceResponse = await axios.get(
-          "http://localhost:3000/province"
+          `${BASE_URL}/province`
         );
 
         setBloodTypes(bloodTypeResponse.data.data);
@@ -63,7 +65,7 @@ export default function AdminHelpOfferPage() {
       }
 
       const response = await axios.get(
-        `http://localhost:3000/help-offer?page=${currentPage}&limit=${limit}`,
+        `${BASE_URL}/help-offer?page=${currentPage}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -117,7 +119,7 @@ export default function AdminHelpOfferPage() {
       }
 
       const response = await axios.delete(
-        `http://localhost:3000/help-offer/${offerToDelete.OfferID}`,
+        `${BASE_URL}/help-offer/${offerToDelete.OfferID}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -158,7 +160,7 @@ export default function AdminHelpOfferPage() {
       }
 
       const response = await axios.put(
-        `http://localhost:3000/help-offer/${offerToUpdate.OfferID}`,
+        `${BASE_URL}/help-offer/${offerToUpdate.OfferID}`,
         {
           BloodType: offerToUpdate.bloodType,
           IsWillingToDonate: offerToUpdate.isWillingToDonate,

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import CardStats from "../../sections/cta-card/cta-card-component";
 import HeaderStats from "../../sections/header-stats/header_stats";
@@ -11,6 +12,8 @@ import FilterableComponent from "../../sections/filterable/filterable-component"
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
 import { Pagination } from "flowbite-react";
 import { format } from "date-fns";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
@@ -35,7 +38,7 @@ const Dashboard = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:3000/user/list-users?page=${currentPage}&limit=${limit}`,
+          `${BASE_URL}/user/list-users?page=${currentPage}&limit=${limit}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -74,12 +77,12 @@ const Dashboard = () => {
     };
 
     fetchUsers();
-    fetchData("http://localhost:3000/appointments", setTotalAppointments);
-    fetchData("http://localhost:3000/emergency", setTotalEmergencies);
-    fetchData("http://localhost:3000/help-offer", setTotalHelpOffers);
-    fetchData("http://localhost:3000/blood-drive", setTotalBloodDrives);
-    fetchData("http://localhost:3000/total-donations", setTotalDonations);
-    fetchData("http://localhost:3000/user/list-users", setTotalUsers);
+    fetchData(`${BASE_URL}/appointments`, setTotalAppointments);
+    fetchData(`${BASE_URL}/emergency`, setTotalEmergencies);
+    fetchData(`${BASE_URL}/help-offer`, setTotalHelpOffers);
+    fetchData(`${BASE_URL}/blood-drive`, setTotalBloodDrives);
+    fetchData(`${BASE_URL}/total-donations`, setTotalDonations);
+    fetchData(`${BASE_URL}/user/list-users`, setTotalUsers);
   }, [currentPage, limit]);
 
   const cardData = [

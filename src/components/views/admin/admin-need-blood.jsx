@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -9,6 +10,8 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
 import formatStatus from "../../utils/format-status";
 // import InitialDataFetching from "../../utility-functions/initial-data-fetching";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function AdminDonateBlood() {
   const [data, setData] = useState([]);
@@ -39,7 +42,7 @@ export default function AdminDonateBlood() {
   useEffect(() => {
     const fetchBloodTypes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/blood-type");
+        const response = await axios.get(`${BASE_URL}/blood-type`);
         setBloodTypes(response.data.data);
       } catch (error) {
         console.error("Error fetching blood types:", error);
@@ -48,7 +51,7 @@ export default function AdminDonateBlood() {
 
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/province");
+        const response = await axios.get(`${BASE_URL}/province`);
         setProvinces(response.data.data);
       } catch (error) {
         console.error("Error fetching provinces:", error);
@@ -88,7 +91,7 @@ export default function AdminDonateBlood() {
       }
 
       const response = await axios.get(
-        `http://localhost:3000/emergency?page=${currentPage}&limit=${limit}`, // Update this URL to the correct endpoint
+        `${BASE_URL}/emergency?page=${currentPage}&limit=${limit}`, // Update this URL to the correct endpoint
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -168,7 +171,7 @@ export default function AdminDonateBlood() {
 
     try {
       const response = await axios.delete(
-        `http://localhost:3000/emergency/${appointmentToDelete.RequestID}`,
+        `${BASE_URL}/emergency/${appointmentToDelete.RequestID}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -250,7 +253,7 @@ export default function AdminDonateBlood() {
       };
 
       await axios.put(
-        `http://localhost:3000/emergency/${appointmentToUpdate.RequestID}`,
+        `${BASE_URL}/emergency/${appointmentToUpdate.RequestID}`,
         updatePayload,
         {
           headers: {

@@ -10,6 +10,8 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
 // import InitialDataFetching from "../../utility-functions/initial-data-fetching";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export default function AdminDonateBlood() {
   const [data, setData] = useState([]);
 
@@ -37,13 +39,13 @@ export default function AdminDonateBlood() {
       try {
         // Fetch blood types
         const bloodTypesResponse = await axios.get(
-          "http://localhost:3000/blood-type"
+          `${BASE_URL}/blood-type`
         );
         setBloodTypes(bloodTypesResponse.data.data);
 
         // Fetch provinces
         const provincesResponse = await axios.get(
-          "http://localhost:3000/province"
+          `${BASE_URL}/province`
         );
         setProvinces(provincesResponse.data.data);
       } catch (error) {
@@ -76,7 +78,7 @@ export default function AdminDonateBlood() {
       }
 
       const response = await axios.get(
-        `http://localhost:3000/appointments?page=${currentPage}&limit=${limit}`,
+        `${BASE_URL}/appointments?page=${currentPage}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -127,7 +129,7 @@ export default function AdminDonateBlood() {
     const id = appointmentToDelete.AppointmentID;
 
     axios
-      .delete(`http://localhost:3000/appointments/delete/${id}`, {
+      .delete(`${BASE_URL}/appointments/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -163,7 +165,7 @@ export default function AdminDonateBlood() {
     e.preventDefault(); // Prevent form from refreshing the page
     try {
       const response = await axios.put(
-        `http://localhost:3000/appointments/update/${appointmentToUpdate.AppointmentID}`,
+        `${BASE_URL}/appointments/update/${appointmentToUpdate.AppointmentID}`,
         {
           bloodType: appointmentToUpdate.BloodType,
           scheduledDate: appointmentToUpdate.ScheduledDate,

@@ -1,9 +1,11 @@
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 export const emergencyRequest = async (emergencyData, authToken) => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/emergency/request",
+      `${BASE_URL}/emergency/request`,
       emergencyData,
       {
         headers: {
@@ -26,7 +28,7 @@ export const fetchBloodInventory = async (
   provinceID
 ) => {
   try {
-    const response = await axios.get(`http://localhost:3000/blood-inventory`, {
+    const response = await axios.get(`${BASE_URL}/blood-inventory`, {
       params: {
         page: page,
         limit: limit,

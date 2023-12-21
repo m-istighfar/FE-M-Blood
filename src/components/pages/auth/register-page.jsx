@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { Dialog, Listbox } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const RegisterPage = () => {
   // State untuk menyimpan daftar provinsi dan provinsi yang dipilih
   const [provinces, setProvinces] = useState([]);
@@ -25,7 +27,7 @@ const RegisterPage = () => {
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/province");
+        const response = await axios.get(`${BASE_URL}/province`);
         setProvinces(response.data.data);
         setSelectedProvince(response.data.data[0]);
       } catch (error) {
@@ -45,7 +47,7 @@ const RegisterPage = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/register",
+        `${BASE_URL}/auth/register`,
         data,
         {
           headers: { "Content-Type": "application/json" },

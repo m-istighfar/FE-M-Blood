@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
@@ -5,6 +6,8 @@ import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
 import ToastNotification from "../../sections/toast-notification/toast-notification";
 import { Pagination } from "flowbite-react";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function AdminDonationPage() {
   const [donations, setDonations] = useState([]);
@@ -22,7 +25,7 @@ export default function AdminDonationPage() {
     const fetchDonations = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/?page=${currentPage}&limit=${limit}`
+          `${BASE_URL}/?page=${currentPage}&limit=${limit}`
         );
         setDonations(formatDonationsData(response.data.data.donations));
         setTotalPages(response.data.data.totalPages);
