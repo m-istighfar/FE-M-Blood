@@ -11,7 +11,14 @@ function DisplayTableComponent({
   currentPage,
   limit,
 }) {
-  // Function to display table rows
+  const renderTableCell = (item, header) => {
+    const content = item[header];
+    if (content && typeof content === "object") {
+      return content.Name || "N/A";
+    }
+    return content || "N/A";
+  };
+
   const renderTableRows = (data) => {
     return data.map((item, index) => (
       <tr
@@ -21,6 +28,7 @@ function DisplayTableComponent({
           item.DriveID ||
           item.OfferID ||
           item.DonationID ||
+          item.UserID ||
           index
         }
         className="border-b"
@@ -34,7 +42,7 @@ function DisplayTableComponent({
             key={header}
             className={`py-2 px-4 ${getStyleForStatus(item[header])}`}
           >
-            {item[header]}
+            {renderTableCell(item, header)}
           </td>
         ))}
         <td className="py-2 px-4">
