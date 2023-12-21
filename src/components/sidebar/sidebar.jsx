@@ -1,12 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../public/BD Logo Hitam.png";
+import { useNavigate } from "react-router-dom";
 
 // import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
 // import UserDropdown from "components/Dropdowns/UserDropdown.js";
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userLoggedIn = localStorage.getItem("userLoggedIn") === "true";
+    setIsLoggedIn(userLoggedIn);
+  }, []);
+
+  const handleLogout = () => {
+    e.preventDefault();
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userLoggedIn");
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
+
   return (
     <>
       <nav className="relative z-10 flex flex-wrap items-center justify-between px-6 py-4 bg-white shadow-xl md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden md:w-64">
@@ -168,12 +185,22 @@ export default function Sidebar() {
             <hr className="my-4 md:min-w-full" />
           </div>
           <div className="mt-4 mb-4">
-            <Link
-              to="/login"
-              className="bg-dark text-white text-[16px] py-3 font-bold block text-center hover:bg-blue hover:text-white transition-colors duration-300 rounded-rmd"
-            >
-              Login
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                to="/login"
+                onClick={handleLogout}
+                className="bg-dark text-white text-[16px] py-3 font-bold block text-center hover:bg-blue hover:text-white transition-colors duration-300 rounded-rmd"
+              >
+                Logout
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="bg-dark text-white text-[16px] py-3 font-bold block text-center hover:bg-blue hover:text-white transition-colors duration-300 rounded-rmd"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </nav>
