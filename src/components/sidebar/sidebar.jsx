@@ -164,30 +164,6 @@ export default function Sidebar() {
               </li>
             </ul>
 
-            <hr className="my-4 md:min-w-full" />
-            <h6 className="md:min-w-full text-red text-xs tracking-[3px] uppercase font-bold block pt-1 pb-4 no-underline">
-              Resources
-            </h6>
-            <ul className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4">
-              <li className="items-center">
-                <Link
-                  className="text-dark_gray hover:text-dark text-[16px] py-3 font-bold block"
-                  to="/"
-                >
-                  Landing Page
-                </Link>
-              </li>
-
-              <li className="items-center">
-                <Link
-                  className="text-dark_gray hover:text-dark text-[16px] py-3 font-bold block"
-                  to="/admin"
-                >
-                  Dashboard
-                </Link>
-              </li>
-            </ul>
-
             {/* Divider */}
             <hr className="my-4 md:min-w-full" />
           </div>
