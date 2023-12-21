@@ -17,7 +17,6 @@ export default function Sidebar() {
   }, []);
 
   const handleLogout = () => {
-    e.preventDefault();
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userLoggedIn");
     setIsLoggedIn(false);

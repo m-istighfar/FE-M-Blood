@@ -20,6 +20,7 @@ const HeaderComponent = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userLoggedIn");
+    localStorage.removeItem("accessToken");
     setIsUserLoggedIn(false);
   };
 
