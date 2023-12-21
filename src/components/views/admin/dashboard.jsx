@@ -18,6 +18,12 @@ const Dashboard = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
 
+  const [totalAppointments, setTotalAppointments] = useState(0);
+  const [totalEmergencies, setTotalEmergencies] = useState(0);
+  const [totalHelpOffers, setTotalHelpOffers] = useState(0);
+  const [totalBloodDrives, setTotalBloodDrives] = useState(0);
+  const [totalDonations, setTotalDonations] = useState(0);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -47,14 +53,42 @@ const Dashboard = () => {
       }
     };
 
+    const renderNumber = (number) => {
+      return number !== undefined ? number.toLocaleString() : "Loading...";
+    };
+
+    const fetchData = async (url, setter) => {
+      try {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          console.error("No access token found. User must be logged in.");
+          return;
+        }
+
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setter(response.data.data.totalRecords);
+      } catch (error) {
+        console.error(`Error fetching data from ${url}:`, error);
+      }
+    };
+
     fetchUsers();
+    fetchData("http://localhost:3000/appointments", setTotalAppointments);
+    fetchData("http://localhost:3000/emergency", setTotalEmergencies);
+    fetchData("http://localhost:3000/help-offer", setTotalHelpOffers);
+    fetchData("http://localhost:3000/blood-drive", setTotalBloodDrives);
+    fetchData("http://localhost:3000/total-donations", setTotalDonations);
   }, [currentPage, limit]);
 
   const cardData = [
     {
       key: 111,
       statSubtitle: "DONATE BLOOD",
-      statTitle: "000,030",
+      statTitle: totalAppointments?.toLocaleString() || "Loading...",
       statArrow: "up",
       statPercent: "3.48",
       statIconName: <BiDonateBlood />,
@@ -63,7 +97,7 @@ const Dashboard = () => {
     {
       key: 222,
       statSubtitle: "NEED BLOOD",
-      statTitle: "00,023",
+      statTitle: totalEmergencies?.toLocaleString() || "Loading...",
       statArrow: "down",
       statPercent: "0.19",
       statIconName: <MdOutlineBloodtype />,
@@ -72,7 +106,7 @@ const Dashboard = () => {
     {
       key: 333,
       statSubtitle: "HOST DRIVE",
-      statTitle: "00,040",
+      statTitle: totalBloodDrives?.toLocaleString() || "Loading...",
       statArrow: "up",
       statPercent: "1.10",
       statIconName: <MdOutlineVolunteerActivism />,
@@ -81,11 +115,20 @@ const Dashboard = () => {
     {
       key: 444,
       statSubtitle: "NEED HELP",
-      statTitle: "00,023",
+      statTitle: totalHelpOffers?.toLocaleString() || "Loading...",
       statArrow: "down",
       statPercent: "2.19",
       statIconName: <BiHelpCircle />,
       to: "/admin/need-help",
+    },
+    {
+      key: 555,
+      statSubtitle: "DONATIONS",
+      statTitle: totalDonations?.toLocaleString() || "Loading...",
+      statArrow: "down",
+      statPercent: "2.19",
+      statIconName: <BiHelpCircle />,
+      to: "/admin/donate-money",
     },
   ];
 
