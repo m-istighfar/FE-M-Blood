@@ -7,7 +7,6 @@ const HeroComponent = ({
   buttonText,
   buttonLink,
   classHint,
-  totalDonations,
 }) => {
   return (
     <section className={`main-wrapper ${classHint}`}>
@@ -19,12 +18,7 @@ const HeroComponent = ({
           <h1 className="heading text-2xl md:text-5xl font-bold text-center tracking-tighter leading-snug text-white">
             {headingText}
           </h1>
-          {/* Displaying total donations */}
-          {totalDonations && (
-            <p className="total-donations text-md md:text-xl text-center text-white mt-2">
-              Total Donations: Rp{totalDonations}
-            </p>
-          )}
+
           {buttonText && (
             <a
               href={buttonLink}

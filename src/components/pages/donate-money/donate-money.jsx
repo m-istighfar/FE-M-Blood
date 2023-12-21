@@ -8,6 +8,7 @@ import FormComponent from "../../sections/form/form-component";
 import HeaderComponent from "../../sections/header/header-component";
 import BeforeFooterCTA from "../../sections/before-footer-cta/before-footer-cta-components";
 import FooterComponent from "../../sections/footer/footer-component";
+import TotalDonationsComponent from "../../sections/total-donation/total-donation";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
@@ -15,7 +16,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const DonateMoneyPage = () => {
   const [formStatus, setFormStatus] = useState({ loading: false, message: "" });
-  const [totalDonations, setTotalDonations] = useState("Loading...");
+  const [totalRecords, setTotalRecords] = useState("Loading...");
   const {
     register,
     handleSubmit,
@@ -34,11 +35,11 @@ const DonateMoneyPage = () => {
 
   const fetchTotalDonations = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/total-donations`);
-      setTotalDonations(response.data.totalDonations || "0");
+      const response = await axios.get(`${BASE_URL}/donation/total-donations`);
+      setTotalRecords(response.data.data.totalRecords);
     } catch (error) {
       console.error("Error fetching total donations:", error);
-      setTotalDonations("Error");
+      setTotalRecords("Error");
     }
   };
 
@@ -46,7 +47,7 @@ const DonateMoneyPage = () => {
     setFormStatus({ loading: true, message: "" });
 
     try {
-      const response = await axios.post(`${BASE_URL}/donate`, data);
+      const response = await axios.post(`${BASE_URL}/donation/create`, data);
       if (response.data.snapToken) {
         window.snap.pay(response.data.snapToken);
       }
@@ -182,8 +183,8 @@ const DonateMoneyPage = () => {
         buttonText={DonateBloodPageDetails.hero.buttonText}
         buttonLink={DonateBloodPageDetails.hero.buttonLink}
         classHint={DonateBloodPageDetails.hero.classHint}
-        totalDonations={totalDonations}
       />
+      <TotalDonationsComponent totalRecords={totalRecords} />
 
       <FormComponent
         isLoading={formStatus.loading}
