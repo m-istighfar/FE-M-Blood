@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
@@ -9,6 +9,7 @@ import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
 import formatStatus from "../../utils/format-status";
+import Filters from "../../sections/filterable/filterable-component";
 // import InitialDataFetching from "../../utility-functions/initial-data-fetching";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -37,6 +38,15 @@ export default function AdminNeedBlood() {
 
   const [bloodTypes, setBloodTypes] = useState([]);
   const [provinces, setProvinces] = useState([]);
+
+  const [filters, setFilters] = useState({
+    bloodType: "",
+    requestDate: "", // Renamed from scheduledDate
+    location: "",
+    status: "",
+    searchBy: "all",
+    query: "",
+  });
 
   // Fetch blood types on component mount
   useEffect(() => {
@@ -82,7 +92,7 @@ export default function AdminNeedBlood() {
     message: "",
   });
 
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
@@ -90,8 +100,18 @@ export default function AdminNeedBlood() {
         return;
       }
 
+      const queryParams = new URLSearchParams(
+        Object.entries(filters).reduce((acc, [key, value]) => {
+          if (value) acc[key] = value;
+          return acc;
+        }, {})
+      ).toString();
+
+      console.log("Current Filters: ", filters);
+      console.log("Query Params: ", queryParams.toString());
+
       const response = await axios.get(
-        `${BASE_URL}/emergency?page=${currentPage}&limit=${limit}`, // Update this URL to the correct endpoint
+        `${BASE_URL}/emergency?page=${currentPage}&limit=${limit}&${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -124,11 +144,11 @@ export default function AdminNeedBlood() {
     } catch (error) {
       console.error("Error fetching emergency requests:", error);
     }
-  };
+  });
 
   useEffect(() => {
     fetchRequests();
-  }, [currentPage, limit]);
+  }, [fetchRequests]);
 
   const handleDelete = (request) => {
     console.log("Deleting appointment:", request);
@@ -275,10 +295,48 @@ export default function AdminNeedBlood() {
       setCurrentPage(newPage);
     }
   };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      bloodType: "",
+      requestDate: "",
+      location: "",
+      status: "",
+      searchBy: "all",
+      query: "",
+    });
+    fetchRequests();
+  };
+
+  const emergencyRequestStatusOptions = [
+    "pending",
+    "inProgress",
+    "fulfilled",
+    "expired",
+    "cancelled",
+  ];
   return (
     <>
       <HeaderStats heading="Blood Donating Users" />
       <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
+        <Filters
+          bloodTypes={bloodTypes}
+          provinces={provinces}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          dateFilterName="requestDate"
+          dateFilterLabel="Request Date"
+          statusOptions={emergencyRequestStatusOptions}
+        />
         <div className="overflow-x-scroll">
           {showToast && (
             <Toast

@@ -7,6 +7,9 @@ function Filters({
   filters,
   onFilterChange,
   onClearFilters,
+  dateFilterName,
+  dateFilterLabel,
+  statusOptions,
 }) {
   return (
     <div className="flex flex-wrap gap-4 justify-center">
@@ -34,23 +37,24 @@ function Filters({
         </select>
       </div>
 
-      {/* Scheduled Date Filter */}
-      <div>
-        <label
-          htmlFor="scheduledDate"
-          className="text-sm font-medium text-gray-700"
-        >
-          Scheduled Date
-        </label>
-        <input
-          type="date"
-          id="scheduledDate"
-          name="scheduledDate"
-          value={filters.scheduledDate}
-          onChange={onFilterChange}
-          className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        />
-      </div>
+      {dateFilterName && (
+        <div>
+          <label
+            htmlFor={dateFilterName}
+            className="text-sm font-medium text-gray-700"
+          >
+            {dateFilterLabel}
+          </label>
+          <input
+            type="date"
+            id={dateFilterName}
+            name={dateFilterName}
+            value={filters[dateFilterName]}
+            onChange={onFilterChange}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+      )}
 
       {/* Location Filter */}
       <div>
@@ -86,11 +90,11 @@ function Filters({
           className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
         >
           <option value="">All</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="rescheduled">Rescheduled</option>
-          {/* Add more options as needed */}
+          {statusOptions.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
         </select>
       </div>
 

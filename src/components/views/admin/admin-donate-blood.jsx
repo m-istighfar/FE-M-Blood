@@ -247,6 +247,12 @@ export default function AdminDonateBlood() {
     }
   };
 
+  const appointmentStatusOptions = [
+    "scheduled",
+    "completed",
+    "cancelled",
+    "rescheduled",
+  ];
   return (
     <>
       <HeaderStats heading="Blood Donating Users" />
@@ -257,6 +263,9 @@ export default function AdminDonateBlood() {
           filters={filters}
           onFilterChange={handleFilterChange}
           onClearFilters={handleClearFilters}
+          dateFilterName="scheduledDate"
+          dateFilterLabel="Scheduled Date"
+          statusOptions={appointmentStatusOptions}
         />
         <div className="overflow-x-scroll">
           {showToast && (
