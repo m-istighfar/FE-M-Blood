@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
+import InventoryFilters from "../../sections/filterable/filter-blood-inventory";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -37,6 +38,14 @@ export default function BloodInventoryAdmin() {
 
   const [provinces, setProvinces] = useState([]);
   const [bloodTypes, setBloodTypes] = useState([]);
+
+  const [filters, setFilters] = useState({
+    expiriDate: "",
+    provinceName: "",
+    bloodType: "",
+    searchBy: "all",
+    query: "",
+  });
 
   useEffect(() => {
     // Fetch provinces
@@ -82,8 +91,15 @@ export default function BloodInventoryAdmin() {
         return;
       }
 
+      const queryParams = new URLSearchParams(
+        Object.entries(filters).reduce((acc, [key, value]) => {
+          if (value) acc[key] = value;
+          return acc;
+        }, {})
+      ).toString();
+
       const response = await axios.get(
-        `${BASE_URL}/blood-inventory?page=${currentPage}&limit=${limit}`,
+        `${BASE_URL}/blood-inventory?page=${currentPage}&limit=${limit}&${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -108,7 +124,24 @@ export default function BloodInventoryAdmin() {
 
   useEffect(() => {
     fetchInventory();
-  }, [currentPage, limit]);
+  }, [currentPage, limit, filters]);
+
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      expiriDate: "",
+      provinceName: "",
+      bloodType: "",
+      searchBy: "all",
+      query: "",
+    });
+  };
 
   const handleDelete = (item) => {
     setItemToDelete(item);
@@ -256,6 +289,13 @@ export default function BloodInventoryAdmin() {
     <>
       <HeaderStats heading="Blood Inventory Management" />
       <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
+        <InventoryFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          bloodTypes={bloodTypes}
+          provinces={provinces}
+        />
         {showToast && (
           <Toast
             position="top-center"
