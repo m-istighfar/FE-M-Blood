@@ -158,13 +158,16 @@ const HostBloodDrivePage = () => {
       required: true,
     },
     {
-      key: "provinceName",
-      name: "provinceName",
+      key: "location",
+      name: "location",
       type: "select",
-      options: provinces.map((province) => ({
-        value: province.Name,
-        label: province.Name,
-      })),
+      options: [
+        { value: "", label: "Select a Province", disabled: true },
+        ...provinces.map((province) => ({
+          value: province.Name,
+          label: province.Name,
+        })),
+      ],
       placeholder: "Select Province",
       required: "Province selection is required",
     },
