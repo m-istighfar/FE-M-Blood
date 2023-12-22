@@ -13,7 +13,7 @@ import formatStatus from "../../utils/format-status";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-export default function AdminDonateBlood() {
+export default function AdminNeedBlood() {
   const [data, setData] = useState([]);
   const [status, setStatus] = useState("pending");
   const [selectedId, setSelectedId] = useState(null);
@@ -23,7 +23,7 @@ export default function AdminDonateBlood() {
   const [limit, setLimit] = useState(10);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [appointmentToUpdate, setAppointmentToUpdate] = useState({});
+  const [requestToUpdate, setRequestToUpdate] = useState({});
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -33,7 +33,7 @@ export default function AdminDonateBlood() {
 
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
     useState(false);
-  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
+  const [requestToDelete, setRequestToDelete] = useState(null);
 
   const [bloodTypes, setBloodTypes] = useState([]);
   const [provinces, setProvinces] = useState([]);
@@ -82,7 +82,7 @@ export default function AdminDonateBlood() {
     message: "",
   });
 
-  const fetchAppointments = async () => {
+  const fetchRequests = async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
@@ -127,33 +127,12 @@ export default function AdminDonateBlood() {
   };
 
   useEffect(() => {
-    fetchAppointments();
+    fetchRequests();
   }, [currentPage, limit]);
 
-  const handleDonatedChange = (id) => {
-    const item = data.find((item) => item.id === id);
-    let status = !item.donated;
-
-    axios
-      .put(`http://localhost:3001/api/donate-blood/donated`, {
-        status,
-        id,
-      })
-      .then((response) => {
-        setData(
-          data.map((item) =>
-            item.id === id ? { ...item, donated: status } : item
-          )
-        );
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const handleDelete = (appointment) => {
-    console.log("Deleting appointment:", appointment);
-    setAppointmentToDelete(appointment);
+  const handleDelete = (request) => {
+    console.log("Deleting appointment:", request);
+    setRequestToDelete(request);
     setIsDeleteConfirmationOpen(true);
   };
 
@@ -171,7 +150,7 @@ export default function AdminDonateBlood() {
 
     try {
       const response = await axios.delete(
-        `${BASE_URL}/emergency/${appointmentToDelete.RequestID}`,
+        `${BASE_URL}/emergency/${requestToDelete.RequestID}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -187,7 +166,7 @@ export default function AdminDonateBlood() {
         setIsError(true);
       }
       setShowToast(true);
-      fetchAppointments(); // Refresh the list after deletion
+      fetchRequests(); // Refresh the list after deletion
     } catch (error) {
       console.error("Error deleting the emergency request:", error);
       setToastMessage("Error occurred while deleting the emergency request.");
@@ -200,26 +179,26 @@ export default function AdminDonateBlood() {
 
   const closeDeleteConfirmation = () => {
     setIsDeleteConfirmationOpen(false);
-    setAppointmentToDelete(null);
+    setRequestToDelete(null);
   };
 
-  const handleUpdateClick = (appointment) => {
-    setAppointmentToUpdate({
-      ...appointment,
+  const handleUpdateClick = (request) => {
+    setRequestToUpdate({
+      ...request,
       Status: "", // Gunakan string kosong atau nilai lain yang mengindikasikan tidak ada status yang dipilih
     });
     setIsModalOpen(true);
   };
 
   const handleStatusChange = (e) => {
-    setAppointmentToUpdate({
-      ...appointmentToUpdate,
+    setRequestToUpdate({
+      ...requestToUpdate,
       Status: e.target.value.trim(),
     });
     setIsStatusChanged(true);
   };
 
-  const handleUpdateAppointment = async (e) => {
+  const handleUpdateRequest = async (e) => {
     e.preventDefault(); // Prevent form from refreshing the page
 
     const accessToken = localStorage.getItem("accessToken");
@@ -239,7 +218,7 @@ export default function AdminDonateBlood() {
       "expired",
       "cancelled",
     ];
-    if (!allowedStatusValues.includes(appointmentToUpdate.Status)) {
+    if (!allowedStatusValues.includes(requestToUpdate.Status)) {
       setToastMessage("Invalid status value. Please select a valid status.");
       setIsError(true);
       setShowToast(true);
@@ -249,11 +228,14 @@ export default function AdminDonateBlood() {
 
     try {
       const updatePayload = {
-        // ... Your existing payload data
+        bloodType: requestToUpdate.BloodType,
+        location: requestToUpdate.Location,
+        status: requestToUpdate.Status,
+        additionalInfo: requestToUpdate.AdditionalInfo,
       };
 
       await axios.put(
-        `${BASE_URL}/emergency/${appointmentToUpdate.RequestID}`,
+        `${BASE_URL}/emergency/${requestToUpdate.RequestID}`,
         updatePayload,
         {
           headers: {
@@ -265,7 +247,7 @@ export default function AdminDonateBlood() {
       setToastMessage("Emergency request updated successfully");
       setIsError(false);
       setShowToast(true);
-      fetchAppointments(); // Refresh the list
+      fetchRequests(); // Refresh the list
     } catch (error) {
       let errorMessage = "Error occurred while updating the emergency request.";
       if (error.response && error.response.data && error.response.data.error) {
@@ -316,7 +298,6 @@ export default function AdminDonateBlood() {
           <DisplayTableComponent
             tableHeader={tableHeader}
             data={data} // Pass the entire dataset
-            handleCheckboxChange={handleDonatedChange}
             type={"donate-blood"}
             handleUpdateClick={handleUpdateClick}
             handleDelete={handleDelete}
@@ -344,11 +325,11 @@ export default function AdminDonateBlood() {
           onConfirm={handleConfirmDelete}
           message="Are you sure you want to delete this appointment?"
         />
-        {appointmentToUpdate && (
+        {requestToUpdate && (
           <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)}>
             <Modal.Header>Update Emergency Request</Modal.Header>
             <Modal.Body>
-              <form onSubmit={handleUpdateAppointment}>
+              <form onSubmit={handleUpdateRequest}>
                 <div className="space-y-4">
                   {/* Blood Type Input */}
                   <div>
@@ -362,10 +343,10 @@ export default function AdminDonateBlood() {
                       id="bloodType"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={appointmentToUpdate.BloodType}
+                      value={requestToUpdate.BloodType}
                       onChange={(e) =>
-                        setAppointmentToUpdate({
-                          ...appointmentToUpdate,
+                        setRequestToUpdate({
+                          ...requestToUpdate,
                           BloodType: e.target.value,
                         })
                       }
@@ -389,10 +370,10 @@ export default function AdminDonateBlood() {
                       id="location"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={appointmentToUpdate.Location}
+                      value={requestToUpdate.Location}
                       onChange={(e) =>
-                        setAppointmentToUpdate({
-                          ...appointmentToUpdate,
+                        setRequestToUpdate({
+                          ...requestToUpdate,
                           Location: e.target.value,
                         })
                       }
@@ -411,7 +392,7 @@ export default function AdminDonateBlood() {
                     id="status"
                     required
                     className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                    value={appointmentToUpdate.Status}
+                    value={requestToUpdate.Status}
                     onChange={handleStatusChange}
                   >
                     <option value="">-- Select Status --</option>{" "}
@@ -435,10 +416,10 @@ export default function AdminDonateBlood() {
                       id="additionalInfo"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={appointmentToUpdate.AdditionalInfo}
+                      value={requestToUpdate.AdditionalInfo}
                       onChange={(e) =>
-                        setAppointmentToUpdate({
-                          ...appointmentToUpdate,
+                        setRequestToUpdate({
+                          ...requestToUpdate,
                           AdditionalInfo: e.target.value,
                         })
                       }
