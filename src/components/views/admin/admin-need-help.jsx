@@ -70,14 +70,15 @@ export default function AdminHelpOfferPage() {
         return;
       }
 
-      const queryParams = new URLSearchParams({
-        ...filters,
-        page: currentPage,
-        limit: limit,
-      }).toString();
+      const queryParams = new URLSearchParams(
+        Object.entries(filters).reduce((acc, [key, value]) => {
+          if (value) acc[key] = value;
+          return acc;
+        }, {})
+      ).toString();
 
       const response = await axios.get(
-        `${BASE_URL}/help-offer?page=${currentPage}&limit=${limit}?${queryParams}`,
+        `${BASE_URL}/help-offer?page=${currentPage}&limit=${limit}&${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
