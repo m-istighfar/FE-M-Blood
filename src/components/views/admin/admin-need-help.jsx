@@ -93,7 +93,6 @@ export default function AdminHelpOfferPage() {
         "Donate?": offer.IsWillingToDonate ? "Yes" : "No",
         "Emergency?": offer.CanHelpInEmergency ? "Yes" : "No",
         Location: offer.Location,
-        Reason: offer.Reason,
       }));
 
       setData(formattedData);
@@ -178,14 +177,18 @@ export default function AdminHelpOfferPage() {
 
   const handleUpdateClick = (offer) => {
     setOfferToUpdate({
-      ...offer,
-      BloodType: offer.BloodType.Type, // Menggunakan string tipe darah
+      OfferID: offer.OfferID,
+      BloodType: offer["Blood Type"],
+      IsWillingToDonate: offer["Donate?"] === "Yes",
+      CanHelpInEmergency: offer["Emergency?"] === "Yes",
+      Location: offer.Location,
     });
     setIsModalOpen(true);
   };
 
   const handleUpdateHelpOffer = async (e) => {
     e.preventDefault();
+
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
@@ -195,11 +198,10 @@ export default function AdminHelpOfferPage() {
       const response = await axios.put(
         `${BASE_URL}/help-offer/${offerToUpdate.OfferID}`,
         {
-          BloodType: offerToUpdate.bloodType,
-          IsWillingToDonate: offerToUpdate.isWillingToDonate,
-          CanHelpInEmergency: offerToUpdate.canHelpInEmergency,
-          Reason: offerToUpdate.reason,
-          Location: offerToUpdate.location,
+          bloodType: offerToUpdate.BloodType,
+          isWillingToDonate: offerToUpdate.IsWillingToDonate,
+          canHelpInEmergency: offerToUpdate.CanHelpInEmergency,
+          location: offerToUpdate.Location,
         },
         {
           headers: {
@@ -208,12 +210,11 @@ export default function AdminHelpOfferPage() {
         }
       );
 
-      setToastMessage(
-        response.data.message || "Help offer updated successfully"
-      );
+      const successMessage =
+        response.data.message || "Help offer updated successfully";
+
+      setToastMessage(successMessage);
       setIsError(false);
-      setShowToast(true);
-      fetchHelpOffers(); // Refresh the list
     } catch (error) {
       let errorMessage = "An error occurred while updating the help offer.";
       if (error.response && error.response.data && error.response.data.error) {
@@ -223,8 +224,8 @@ export default function AdminHelpOfferPage() {
       setIsError(true);
     } finally {
       setShowToast(true);
+      setIsModalOpen(false);
       fetchHelpOffers(); // Refresh the list
-      setIsModalOpen(false); // Close the modal regardless of the outcome
     }
   };
 
@@ -338,7 +339,7 @@ export default function AdminHelpOfferPage() {
                       type="checkbox"
                       id="isWillingToDonate"
                       className="mt-1"
-                      checked={offerToUpdate.IsWillingToDonate || false}
+                      checked={offerToUpdate.IsWillingToDonate}
                       onChange={(e) =>
                         setOfferToUpdate({
                           ...offerToUpdate,
@@ -360,7 +361,7 @@ export default function AdminHelpOfferPage() {
                       type="checkbox"
                       id="canHelpInEmergency"
                       className="mt-1"
-                      checked={offerToUpdate.CanHelpInEmergency || false}
+                      checked={offerToUpdate.CanHelpInEmergency}
                       onChange={(e) =>
                         setOfferToUpdate({
                           ...offerToUpdate,
