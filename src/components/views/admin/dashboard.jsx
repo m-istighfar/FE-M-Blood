@@ -81,7 +81,7 @@ const Dashboard = () => {
     fetchData(`${BASE_URL}/emergency`, setTotalEmergencies);
     fetchData(`${BASE_URL}/help-offer`, setTotalHelpOffers);
     fetchData(`${BASE_URL}/blood-drive`, setTotalBloodDrives);
-    fetchData(`${BASE_URL}/total-donations`, setTotalDonations);
+    fetchData(`${BASE_URL}/donation/total-donations`, setTotalDonations);
     fetchData(`${BASE_URL}/user/list-users`, setTotalUsers);
   }, [currentPage, limit]);
 
