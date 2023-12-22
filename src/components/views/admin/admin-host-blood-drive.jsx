@@ -6,7 +6,7 @@ import DisplayTableComponent from "../../sections/display-table/display-table-co
 import { format } from "date-fns";
 import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import Filters from "../../sections/filterable/filterable-component";
+import Filters from "../../sections/filterable/filter-host-drive";
 import DeleteConfirmationModal from "../../utils/modal";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -27,9 +27,7 @@ export default function AdminHostBloodDrive() {
   const [provinces, setProvinces] = useState([]);
 
   const [filters, setFilters] = useState({
-    institute: "",
-    provinceName: "",
-    designation: "",
+    location: "",
     scheduledDate: "",
     searchBy: "all",
     query: "",
@@ -87,7 +85,7 @@ export default function AdminHostBloodDrive() {
           new Date(drive.ScheduledDate),
           "yyyy-MM-dd HH:mm:ss"
         ),
-        ProvinceName: drive.Province.Name,
+        Location: drive.Province.Name,
       }));
 
       setData(formattedData);
@@ -111,9 +109,7 @@ export default function AdminHostBloodDrive() {
 
   const handleClearFilters = () => {
     setFilters({
-      institute: "",
-      provinceName: "",
-      designation: "",
+      location: "",
       scheduledDate: "",
       searchBy: "all",
       query: "",
@@ -174,7 +170,7 @@ export default function AdminHostBloodDrive() {
         `${BASE_URL}/blood-drive/${driveToUpdate.DriveID}`,
         {
           institute: driveToUpdate.Institute,
-          provinceName: driveToUpdate.ProvinceName,
+          location: driveToUpdate.Location,
           designation: driveToUpdate.Designation,
           scheduledDate: driveToUpdate.ScheduledDate,
         },
@@ -211,7 +207,7 @@ export default function AdminHostBloodDrive() {
     "No.",
     "UserID",
     "Institute",
-    "ProvinceName",
+    "Location",
     "Designation",
     "ScheduledDate",
   ];
@@ -299,17 +295,17 @@ export default function AdminHostBloodDrive() {
                   {/* Province Dropdown */}
                   <div>
                     <label
-                      htmlFor="provinceName"
+                      htmlFor="location"
                       className="block text-sm font-medium text-gray-700"
                     >
                       Province Name
                     </label>
                     <select
-                      id="provinceName"
+                      id="location"
                       required
                       className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      value={driveToUpdate.ProvinceName}
-                      onChange={(e) => handleChange(e, "ProvinceName")}
+                      value={driveToUpdate.Location}
+                      onChange={(e) => handleChange(e, "Location")}
                     >
                       {provinces.map((province) => (
                         <option key={province.ProvinceID} value={province.Name}>
