@@ -208,8 +208,8 @@ export default function BloodInventoryAdmin() {
       await axios.put(
         `${BASE_URL}/blood-inventory/${itemToUpdate.InventoryID}`,
         {
-          Quantity: itemToUpdate.quantity,
-          ExpiryDate: itemToUpdate.expiryDate,
+          quantity: parseInt(itemToUpdate.Quantity),
+          expiryDate: itemToUpdate.ExpiryDate,
         },
         {
           headers: {
