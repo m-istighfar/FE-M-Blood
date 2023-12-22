@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
+import Filters from "../../sections/filterable/filterable-component";
 import { format } from "date-fns";
 import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -74,7 +75,7 @@ export default function AdminDonateBlood() {
     }
   }, [showToast, toastDuration]);
 
-  const fetchAppointments = async () => {
+  const fetchAppointments = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
@@ -118,16 +119,17 @@ export default function AdminDonateBlood() {
     } catch (error) {
       console.error("Error fetching appointments:", error);
     }
-  };
+  });
 
   useEffect(() => {
     fetchAppointments();
-  }, [currentPage, limit, filters]);
+  }, [fetchAppointments]);
 
   const handleFilterChange = (e) => {
+    const { name, value } = e.target;
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
@@ -249,150 +251,13 @@ export default function AdminDonateBlood() {
     <>
       <HeaderStats heading="Blood Donating Users" />
       <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
-        <div className="flex flex-wrap gap-4 justify-center">
-          {/* Blood Type Filter */}
-          <div>
-            <label
-              htmlFor="bloodType"
-              className="text-sm font-medium text-gray-700"
-            >
-              Blood Type
-            </label>
-            <select
-              id="bloodType"
-              name="bloodType"
-              onChange={handleFilterChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">All</option>
-              {bloodTypes.map((type) => (
-                <option key={type.BloodTypeID} value={type.Type}>
-                  {type.Type}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Scheduled Date Filter */}
-          <div>
-            <label
-              htmlFor="scheduledDate"
-              className="text-sm font-medium text-gray-700"
-            >
-              Scheduled Date
-            </label>
-            <input
-              type="date"
-              id="scheduledDate"
-              name="scheduledDate"
-              onChange={handleFilterChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-
-          {/* Location Filter */}
-          <div>
-            <label
-              htmlFor="location"
-              className="text-sm font-medium text-gray-700"
-            >
-              Location
-            </label>
-            <select
-              id="location"
-              name="location"
-              onChange={handleFilterChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">All</option>
-              {provinces.map((province) => (
-                <option key={province.ProvinceID} value={province.Name}>
-                  {province.Name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Status Filter */}
-          <div>
-            <label
-              htmlFor="status"
-              className="text-sm font-medium text-gray-700"
-            >
-              Status
-            </label>
-            <select
-              id="status"
-              name="status"
-              onChange={handleFilterChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">All</option>
-              <option value="scheduled">Scheduled</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="rescheduled">Rescheduled</option>
-            </select>
-          </div>
-
-          {/* Search By Filter */}
-          <div>
-            <label
-              htmlFor="searchBy"
-              className="text-sm font-medium text-gray-700"
-            >
-              Search By
-            </label>
-            <select
-              id="searchBy"
-              name="searchBy"
-              onChange={handleFilterChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">All</option>
-              <option value="bloodType">Blood Type</option>
-              <option value="location">Location</option>
-              <option value="status">Status</option>
-            </select>
-          </div>
-
-          {/* Query Filter */}
-          <div>
-            <label
-              htmlFor="query"
-              className="text-sm font-medium text-gray-700"
-            >
-              Query
-            </label>
-            <input
-              type="text"
-              id="query"
-              name="query"
-              onChange={handleFilterChange}
-              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-          </div>
-
-          {/* Filter Button */}
-          <div className="flex items-end">
-            <button
-              onClick={fetchAppointments}
-              className="bg-blue hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Apply Filters
-            </button>
-          </div>
-
-          {/* Clear Filters Button */}
-          <div className="flex items-end">
-            <button
-              onClick={handleClearFilters}
-              className="bg-gray hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Clear Filters
-            </button>
-          </div>
-        </div>
+        <Filters
+          bloodTypes={bloodTypes}
+          provinces={provinces}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
         <div className="overflow-x-scroll">
           {showToast && (
             <Toast
