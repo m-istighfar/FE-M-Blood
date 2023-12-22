@@ -7,6 +7,7 @@ import DisplayTableComponent from "../../sections/display-table/display-table-co
 import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
+import Filters from "../../sections/filterable/filter-help-offer";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -27,15 +28,20 @@ export default function AdminHelpOfferPage() {
   const [bloodTypes, setBloodTypes] = useState([]);
   const [provinces, setProvinces] = useState([]);
 
+  const [filters, setFilters] = useState({
+    searchBy: "all",
+    query: "",
+    bloodType: "",
+    isWillingToDonate: "",
+    canHelpInEmergency: "",
+    location: "",
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const bloodTypeResponse = await axios.get(
-          `${BASE_URL}/blood-type`
-        );
-        const provinceResponse = await axios.get(
-          `${BASE_URL}/province`
-        );
+        const bloodTypeResponse = await axios.get(`${BASE_URL}/blood-type`);
+        const provinceResponse = await axios.get(`${BASE_URL}/province`);
 
         setBloodTypes(bloodTypeResponse.data.data);
         setProvinces(provinceResponse.data.data);
@@ -64,8 +70,14 @@ export default function AdminHelpOfferPage() {
         return;
       }
 
+      const queryParams = new URLSearchParams({
+        ...filters,
+        page: currentPage,
+        limit: limit,
+      }).toString();
+
       const response = await axios.get(
-        `${BASE_URL}/help-offer?page=${currentPage}&limit=${limit}`,
+        `${BASE_URL}/help-offer?page=${currentPage}&limit=${limit}?${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -92,7 +104,27 @@ export default function AdminHelpOfferPage() {
 
   useEffect(() => {
     fetchHelpOffers();
-  }, [currentPage, limit]);
+  }, [currentPage, limit, filters]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  // Define a function to clear filters
+  const handleClearFilters = () => {
+    setFilters({
+      searchBy: "all",
+      query: "",
+      bloodType: "",
+      isWillingToDonate: "",
+      canHelpInEmergency: "",
+      location: "",
+    });
+  };
 
   const handleDelete = (offer) => {
     console.log("Offer to delete:", offer);
@@ -214,6 +246,13 @@ export default function AdminHelpOfferPage() {
     <>
       <HeaderStats heading="Help Offer Management" />
       <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
+        <Filters
+          bloodTypes={bloodTypes}
+          provinces={provinces}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
         <div className="overflow-x-scroll">
           {showToast && (
             <Toast
