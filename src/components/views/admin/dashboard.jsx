@@ -8,7 +8,7 @@ import { BiDonateBlood, BiHelpCircle } from "react-icons/bi";
 import { MdOutlineBloodtype } from "react-icons/md";
 import { MdOutlineVolunteerActivism } from "react-icons/md";
 import CardLineChart from "../../sections/chart/chart-component";
-import FilterableComponent from "../../sections/filterable/filterable-component";
+import UserFilters from "../../sections/filterable/filter-user";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
 import { Pagination } from "flowbite-react";
 import { format } from "date-fns";
@@ -27,6 +27,27 @@ const Dashboard = () => {
   const [totalBloodDrives, setTotalBloodDrives] = useState(0);
   const [totalDonations, setTotalDonations] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [provinces, setProvinces] = useState([]);
+
+  const [filters, setFilters] = useState({
+    searchBy: "all",
+    query: "",
+    location: "",
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const provinceResponse = await axios.get(`${BASE_URL}/province`);
+
+        setProvinces(provinceResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -37,8 +58,15 @@ const Dashboard = () => {
           return;
         }
 
+        const queryParams = new URLSearchParams(
+          Object.entries(filters).reduce((acc, [key, value]) => {
+            if (value) acc[key] = value;
+            return acc;
+          }, {})
+        ).toString();
+
         const response = await axios.get(
-          `${BASE_URL}/user/list-users?page=${currentPage}&limit=${limit}`,
+          `${BASE_URL}/user/list-users?page=${currentPage}&limit=${limit}&${queryParams}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -83,7 +111,23 @@ const Dashboard = () => {
     fetchData(`${BASE_URL}/blood-drive`, setTotalBloodDrives);
     fetchData(`${BASE_URL}/donation/total-donations`, setTotalDonations);
     fetchData(`${BASE_URL}/user/list-users`, setTotalUsers);
-  }, [currentPage, limit]);
+  }, [currentPage, limit, filters]);
+
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Clear filters
+  const handleClearFilters = () => {
+    setFilters({
+      searchBy: "all",
+      query: "",
+      location: "",
+    });
+  };
 
   const cardData = [
     {
@@ -199,6 +243,13 @@ const Dashboard = () => {
         <h2 className="text-dark_red font-semibold mt-10 mb-5 text-[35px]">
           User Management
         </h2>
+
+        <UserFilters
+          provinces={provinces}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
 
         <div className="overflow-x-scroll">
           <DisplayTableComponent
