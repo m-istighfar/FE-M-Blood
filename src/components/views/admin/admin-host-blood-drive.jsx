@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import HeaderStats from "../../sections/header-stats/header_stats";
 import DisplayTableComponent from "../../sections/display-table/display-table-component";
 import { format } from "date-fns";
 import { Pagination, Modal, Toast } from "flowbite-react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import Filters from "../../sections/filterable/filterable-component";
 import DeleteConfirmationModal from "../../utils/modal";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -24,6 +25,15 @@ export default function AdminHostBloodDrive() {
     useState(false);
   const [driveToDelete, setDriveToDelete] = useState(null);
   const [provinces, setProvinces] = useState([]);
+
+  const [filters, setFilters] = useState({
+    institute: "",
+    provinceName: "",
+    designation: "",
+    scheduledDate: "",
+    searchBy: "all",
+    query: "",
+  });
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -55,8 +65,15 @@ export default function AdminHostBloodDrive() {
         return;
       }
 
+      const queryParams = new URLSearchParams(
+        Object.entries(filters).reduce((acc, [key, value]) => {
+          if (value) acc[key] = value;
+          return acc;
+        }, {})
+      ).toString();
+
       const response = await axios.get(
-        `${BASE_URL}/blood-drive?page=${currentPage}&limit=${limit}`,
+        `${BASE_URL}/blood-drive?page=${currentPage}&limit=${limit}&${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -82,7 +99,26 @@ export default function AdminHostBloodDrive() {
 
   useEffect(() => {
     fetchBloodDrives();
-  }, [currentPage, limit]);
+  }, [currentPage, limit, filters]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      institute: "",
+      provinceName: "",
+      designation: "",
+      scheduledDate: "",
+      searchBy: "all",
+      query: "",
+    });
+  };
 
   const handleDelete = (drive) => {
     setDriveToDelete(drive);
@@ -190,6 +226,14 @@ export default function AdminHostBloodDrive() {
     <>
       <HeaderStats heading="Blood Drive Management" />
       <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
+        <Filters
+          provinces={provinces}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+          dateFilterName="scheduledDate"
+          dateFilterLabel="Scheduled Date"
+        />
         <div className="overflow-x-scroll">
           {showToast && (
             <Toast
