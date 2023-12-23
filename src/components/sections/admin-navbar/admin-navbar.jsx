@@ -1,13 +1,10 @@
 import React from "react";
-// import UserDropdown from "components/Dropdowns/UserDropdown.js";
 
 export default function Navbar() {
   return (
     <>
-      {/* Navbar */}
       <nav className="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
         <div className="w-full mx-auto items-center flex justify-between flex-wrap px-4 md:flex-nowrap md:px-10">
-          {/* Brand */}
           <a
             className="text-white text-sm uppercase font-bold lg:inline-block hidden"
             href="#pablo"
@@ -15,10 +12,8 @@ export default function Navbar() {
           >
             Dashboard
           </a>
-          {/* Rest of the navbar content */}
         </div>
       </nav>
-      {/* End Navbar */}
     </>
   );
 }

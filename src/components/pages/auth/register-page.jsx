@@ -7,11 +7,9 @@ import { useNavigate } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const RegisterPage = () => {
-  // State untuk menyimpan daftar provinsi dan provinsi yang dipilih
   const [provinces, setProvinces] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState(null);
 
-  // State untuk mengatur modal (buka/tutup dan jenisnya)
   const [modalState, setModalState] = useState({ isOpen: false, type: "" });
 
   const navigate = useNavigate();
@@ -23,7 +21,6 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm();
 
-  // useEffect untuk mengambil data provinsi dari API
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
@@ -38,21 +35,15 @@ const RegisterPage = () => {
     fetchProvinces();
   }, []);
 
-  // useEffect untuk mengatur nilai 'provinceId' pada form berdasarkan provinsi yang dipilih
   useEffect(() => {
     setValue("provinceId", selectedProvince?.ProvinceID);
   }, [selectedProvince, setValue]);
 
-  // Fungsi yang dijalankan ketika form disubmit
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/register`,
-        data,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/auth/register`, data, {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log(response.data);
       setModalState({ isOpen: true, type: "success" });
       reset();
@@ -66,7 +57,6 @@ const RegisterPage = () => {
     }
   };
 
-  // Fungsi untuk menutup modal
   const closeModal = () => {
     setModalState({ isOpen: false, type: "" });
     if (modalState.type === "success") {
@@ -184,9 +174,7 @@ const RegisterPage = () => {
                           {({ active }) => (
                             <li
                               className={`${
-                                active
-                                  ? "bg-blue text-white"
-                                  : "text-gray-900"
+                                active ? "bg-blue text-white" : "text-gray-900"
                               } cursor-pointer select-none relative px-4 py-2`}
                             >
                               {province.Name}
@@ -225,7 +213,6 @@ const RegisterPage = () => {
         </div>
       </div>
 
-      {/* Modal untuk menampilkan pesan setelah submit */}
       <Dialog
         open={modalState.isOpen}
         onClose={closeModal}

@@ -10,7 +10,6 @@ import FooterComponent from "../../sections/footer/footer-component";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Modal } from "flowbite-react";
-// import newUsersInsertRequest from "../../utility-functions/new-users-insert-request";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 

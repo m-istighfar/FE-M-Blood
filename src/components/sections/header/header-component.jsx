@@ -56,7 +56,6 @@ const HeaderComponent = () => {
       }`}
     >
       <nav className="flex items-center justify-between p-4 lg:px-8 max-w-7xl mx-auto">
-        {/* Logo */}
         <a href="/" className="-m-1.5 p-1.5">
           <img
             className="w-auto h-12 lg:h-20"
@@ -65,7 +64,6 @@ const HeaderComponent = () => {
           />
         </a>
 
-        {/* Mobile menu button */}
         <div className="flex lg:hidden">
           <button
             onClick={() => setMobileMenuOpen(true)}
@@ -75,7 +73,6 @@ const HeaderComponent = () => {
           </button>
         </div>
 
-        {/* Desktop Navigation */}
         <div className="hidden lg:flex lg:gap-x-4">
           {navigation.map((item) => (
             <NavLink
@@ -98,12 +95,10 @@ const HeaderComponent = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
         <div className="fixed inset-0 z-50 bg-dark_overlay/60 backdrop-blur-sm" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full px-6 py-6 overflow-y-auto bg-white/[.85] backdrop-blur-lg sm:max-w-sm">
           <div className="flex items-center justify-between">
-            {/* Mobile Logo */}
             <a href="/">
               <img className="w-auto h-12" src={BlackLogo} alt={companyName} />
             </a>

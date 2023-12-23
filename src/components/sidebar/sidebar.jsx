@@ -27,7 +27,6 @@ export default function Sidebar() {
     <>
       <nav className="relative z-10 flex flex-wrap items-center justify-between px-6 py-4 bg-white shadow-xl md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden md:w-64">
         <div className="flex flex-wrap items-center justify-between w-full px-0 mx-auto md:flex-col md:items-stretch md:min-h-full md:flex-nowrap">
-          {/* Toggler */}
           <button
             className="px-3 py-1 text-xl leading-none text-black bg-transparent border border-transparent border-solid rounded opacity-50 cursor-pointer md:hidden"
             type="button"
@@ -35,7 +34,6 @@ export default function Sidebar() {
           >
             <i className="fas fa-bars"></i>
           </button>
-          {/* Brand */}
           <Link
             className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left uppercase md:block md:pb-2 text-blue whitespace-nowrap"
             to="/"
@@ -48,7 +46,6 @@ export default function Sidebar() {
               collapseShow
             }
           >
-            {/* Collapse header */}
             <div className="block pb-4 mb-4 border-b border-solid md:min-w-full md:hidden border-blue">
               <div className="flex flex-wrap">
                 <div className="w-6/12">
@@ -70,13 +67,10 @@ export default function Sidebar() {
                 </div>
               </div>
             </div>
-            {/* Divider */}
             <hr className="my-4 md:min-w-full" />
-            {/* Heading */}
             <h6 className="md:min-w-full text-red text-xs tracking-[3px] uppercase font-bold block pt-1 pb-4 no-underline">
               Users Data
             </h6>
-            {/* Navigation */}
 
             <ul className="flex flex-col list-none md:flex-col md:min-w-full">
               <li className="items-center">
@@ -148,8 +142,6 @@ export default function Sidebar() {
                   Need Help
                 </Link>
               </li>
-
-              {/* Blood Inventory */}
               <li className="items-center">
                 <Link
                   className={
@@ -164,7 +156,6 @@ export default function Sidebar() {
                 </Link>
               </li>
 
-              {/* Donate Money */}
               <li className="items-center">
                 <Link
                   className={
@@ -180,7 +171,6 @@ export default function Sidebar() {
               </li>
             </ul>
 
-            {/* Divider */}
             <hr className="my-4 md:min-w-full" />
           </div>
           <div className="mt-4 mb-4">

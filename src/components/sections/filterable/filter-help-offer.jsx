@@ -10,7 +10,6 @@ function Filters({
 }) {
   return (
     <div className="flex flex-wrap gap-4 justify-center">
-      {/* Blood Type Filter */}
       <div>
         <label
           htmlFor="bloodType"
@@ -34,7 +33,6 @@ function Filters({
         </select>
       </div>
 
-      {/* Willingness to Donate Filter */}
       <div>
         <label
           htmlFor="isWillingToDonate"
@@ -55,7 +53,6 @@ function Filters({
         </select>
       </div>
 
-      {/* Can Help in Emergency Filter */}
       <div>
         <label
           htmlFor="canHelpInEmergency"
@@ -76,7 +73,6 @@ function Filters({
         </select>
       </div>
 
-      {/* Location Filter */}
       <div>
         <label htmlFor="location" className="text-sm font-medium text-gray-700">
           Location
@@ -96,8 +92,6 @@ function Filters({
           ))}
         </select>
       </div>
-
-      {/* Query Filter */}
       <div>
         <label htmlFor="query" className="text-sm font-medium text-gray-700">
           Query
@@ -113,7 +107,6 @@ function Filters({
         />
       </div>
 
-      {/* Clear Filters Button */}
       <div className="flex items-end">
         <button
           onClick={onClearFilters}

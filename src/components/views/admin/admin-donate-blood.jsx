@@ -43,15 +43,12 @@ export default function AdminDonateBlood() {
     query: "",
   });
 
-  // Fetch blood types and provinces on component mount
   useEffect(() => {
     const fetchDropdownData = async () => {
       try {
-        // Fetch blood types
         const bloodTypesResponse = await axios.get(`${BASE_URL}/blood-type`);
         setBloodTypes(bloodTypesResponse.data.data);
 
-        // Fetch provinces
         const provincesResponse = await axios.get(`${BASE_URL}/province`);
         setProvinces(provincesResponse.data.data);
       } catch (error) {
@@ -70,7 +67,6 @@ export default function AdminDonateBlood() {
         setShowToast(false);
       }, toastDuration);
 
-      // Cleanup the timer when the component is unmounted or the showToast changes
       return () => clearTimeout(timer);
     }
   }, [showToast, toastDuration]);
@@ -102,7 +98,6 @@ export default function AdminDonateBlood() {
         }
       );
 
-      // Ubah format tanggal di sini
       const formattedData = response.data.data.appointments.map(
         (appointment) => ({
           ...appointment,
@@ -110,11 +105,11 @@ export default function AdminDonateBlood() {
             new Date(appointment.ScheduledDate),
             "yyyy-MM-dd HH:mm:ss"
           ),
-          BloodType: appointment.BloodType.Type, // Ganti BloodTypeID dengan BloodType.Type
+          BloodType: appointment.BloodType.Type,
         })
       );
 
-      setData(formattedData); // Update state dengan data yang telah diubah format tanggal
+      setData(formattedData);
       setTotalPages(response.data.data.totalPages);
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -135,14 +130,14 @@ export default function AdminDonateBlood() {
 
   const handleClearFilters = () => {
     setFilters({
-      bloodType: "", // Reset bloodType filter
-      scheduledDate: "", // Reset scheduledDate filter
-      location: "", // Reset location filter
-      status: "", // Reset status filter
-      searchBy: "all", // Reset searchBy filter to "all"
-      query: "", // Reset query filter
+      bloodType: "",
+      scheduledDate: "",
+      location: "",
+      status: "",
+      searchBy: "all",
+      query: "",
     });
-    fetchAppointments(); // Fetch appointments with reset filters
+    fetchAppointments();
   };
 
   const handleDelete = (appointment) => {
@@ -158,7 +153,7 @@ export default function AdminDonateBlood() {
       setToastMessage("User is not authenticated.");
       setIsError(true);
       setShowToast(true);
-      closeDeleteConfirmation(); // Close the delete confirmation modal
+      closeDeleteConfirmation();
       return;
     }
 
@@ -175,14 +170,14 @@ export default function AdminDonateBlood() {
         setToastMessage("Appointment deleted successfully");
         setIsError(false);
         setShowToast(true);
-        closeDeleteConfirmation(); // Close the delete confirmation modal
+        closeDeleteConfirmation();
       })
       .catch((error) => {
         console.error("Error deleting the appointment:", error);
         setToastMessage("Error deleting appointment");
         setIsError(true);
         setShowToast(true);
-        closeDeleteConfirmation(); // Close the delete confirmation modal
+        closeDeleteConfirmation();
       });
   };
 
@@ -198,7 +193,7 @@ export default function AdminDonateBlood() {
 
   const handleUpdateAppointment = async (e) => {
     const accessToken = localStorage.getItem("accessToken");
-    e.preventDefault(); // Prevent form from refreshing the page
+    e.preventDefault();
     try {
       const response = await axios.put(
         `${BASE_URL}/appointments/update/${appointmentToUpdate.AppointmentID}`,
@@ -219,7 +214,7 @@ export default function AdminDonateBlood() {
       );
       setIsError(false);
       setShowToast(true);
-      fetchAppointments(); // Refresh the list
+      fetchAppointments();
     } catch (error) {
       let errorMessage = "An error occurred while updating the appointment.";
       if (error.response && error.response.data.error) {
@@ -229,7 +224,7 @@ export default function AdminDonateBlood() {
       setIsError(true);
       setShowToast(true);
     } finally {
-      setIsModalOpen(false); // Close the modal regardless of the outcome
+      setIsModalOpen(false);
     }
   };
 
@@ -274,18 +269,17 @@ export default function AdminDonateBlood() {
               onClose={() => setShowToast(false)}
               title={isError ? "Error" : "Success"}
               color={isError ? "failure" : "success"}
-              className="shadow-lg border-2 border-blue" // Custom styling
+              className="shadow-lg border-2 border-blue"
             >
               {toastMessage}
               <button onClick={() => setShowToast(false)} className="text-red">
                 <XMarkIcon className="h-5 w-5" />{" "}
-                {/* Tombol tutup dengan ikon */}
               </button>
             </Toast>
           )}
           <DisplayTableComponent
             tableHeader={tableHeader}
-            data={data} // Pass the entire dataset
+            data={data}
             handleUpdateClick={handleUpdateClick}
             handleDelete={handleDelete}
             currentPage={currentPage}
@@ -408,7 +402,6 @@ export default function AdminDonateBlood() {
                       <option value="completed">Completed</option>
                       <option value="cancelled">Cancelled</option>
                       <option value="rescheduled">Rescheduled</option>
-                      {/* Add more options as needed */}
                     </select>
                   </div>
                 </div>

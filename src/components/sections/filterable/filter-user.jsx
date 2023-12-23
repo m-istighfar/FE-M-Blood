@@ -2,7 +2,6 @@
 function UserFilters({ provinces, filters, onFilterChange, onClearFilters }) {
   return (
     <div className="flex flex-wrap gap-4 justify-center">
-      {/* Province Filter */}
       <div>
         <label htmlFor="location" className="text-sm font-medium text-gray-700">
           Province
@@ -23,7 +22,6 @@ function UserFilters({ provinces, filters, onFilterChange, onClearFilters }) {
         </select>
       </div>
 
-      {/* Query Filter */}
       <div>
         <label htmlFor="query" className="text-sm font-medium text-gray-700">
           Query
@@ -39,7 +37,6 @@ function UserFilters({ provinces, filters, onFilterChange, onClearFilters }) {
         />
       </div>
 
-      {/* Clear Filters Button */}
       <div className="flex items-end">
         <button
           onClick={onClearFilters}

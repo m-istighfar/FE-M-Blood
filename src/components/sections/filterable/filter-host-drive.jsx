@@ -10,9 +10,6 @@ function Filters({
 }) {
   return (
     <div className="flex flex-wrap gap-4 justify-center">
-      {/* Institute Filter */}
-
-      {/* Scheduled Date Filter */}
       <div>
         <label
           htmlFor="scheduledDate"
@@ -30,7 +27,6 @@ function Filters({
         />
       </div>
 
-      {/* Location Filter */}
       <div>
         <label htmlFor="location" className="text-sm font-medium text-gray-700">
           Location
@@ -51,7 +47,6 @@ function Filters({
         </select>
       </div>
 
-      {/* Query Filter */}
       <div>
         <label htmlFor="query" className="text-sm font-medium text-gray-700">
           Query

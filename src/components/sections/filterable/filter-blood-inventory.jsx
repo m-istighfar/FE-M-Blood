@@ -9,7 +9,6 @@ function InventoryFilters({
 }) {
   return (
     <div className="flex flex-wrap gap-4 justify-center">
-      {/* Blood Type Filter */}
       <div>
         <label
           htmlFor="bloodType"
@@ -33,7 +32,6 @@ function InventoryFilters({
         </select>
       </div>
 
-      {/* Expiry Date Filter */}
       <div>
         <label
           htmlFor="expiriDate"
@@ -51,8 +49,6 @@ function InventoryFilters({
         />
       </div>
 
-      {/* Province Filter */}
-      {/* Province Filter */}
       <div>
         <label
           htmlFor="provinceName"
@@ -76,7 +72,6 @@ function InventoryFilters({
         </select>
       </div>
 
-      {/* Query Filter */}
       <div>
         <label htmlFor="query" className="text-sm font-medium text-gray-700">
           Query
@@ -92,7 +87,6 @@ function InventoryFilters({
         />
       </div>
 
-      {/* Clear Filters Button */}
       <div className="flex items-end">
         <button
           onClick={onClearFilters}

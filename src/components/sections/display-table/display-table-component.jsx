@@ -70,7 +70,6 @@ function DisplayTableComponent({
       <table className="mt-10 shadow-lg bg-white w-full">
         <thead className="bg-dark p-4 text-off_white font-normal border border-dark">
           <tr>
-            {/* Display table headers */}
             {tableHeader.map((header, index) => (
               <th
                 className="px-4 py-4 font-normal text-[14px] text-start uppercase tracking-[.3em] border-rmd"
@@ -85,7 +84,6 @@ function DisplayTableComponent({
           </tr>
         </thead>
         <tbody className="border-b border-off_white">
-          {/* Display table rows */}
           {renderTableRows(data)}
         </tbody>
       </table>
@@ -93,7 +91,6 @@ function DisplayTableComponent({
   );
 }
 
-// PropType validation
 DisplayTableComponent.propTypes = {
   tableHeader: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,

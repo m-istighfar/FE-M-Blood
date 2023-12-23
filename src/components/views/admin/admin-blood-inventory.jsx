@@ -48,7 +48,6 @@ export default function BloodInventoryAdmin() {
   });
 
   useEffect(() => {
-    // Fetch provinces
     const fetchProvinces = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/province`);
@@ -58,7 +57,6 @@ export default function BloodInventoryAdmin() {
       }
     };
 
-    // Fetch blood types
     const fetchBloodTypes = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/blood-type`);
@@ -188,7 +186,6 @@ export default function BloodInventoryAdmin() {
   };
 
   const handleUpdateClick = (item) => {
-    // Check if ExpiryDate is valid, if not set a default value
     const validExpiryDate = item.ExpiryDate
       ? new Date(item.ExpiryDate)
       : new Date();
@@ -261,8 +258,8 @@ export default function BloodInventoryAdmin() {
       setToastMessage("New blood inventory added successfully");
       setIsError(false);
       setShowToast(true);
-      fetchInventory(); // To refresh the inventory list
-      setIsNewInventoryModalOpen(false); // Close the modal
+      fetchInventory();
+      setIsNewInventoryModalOpen(false);
     } catch (error) {
       console.error("Error adding new inventory:", error);
       setToastMessage("Error adding new inventory item");
@@ -346,7 +343,6 @@ export default function BloodInventoryAdmin() {
             <Modal.Header>Update Inventory Item</Modal.Header>
             <Modal.Body>
               <form onSubmit={handleUpdateInventory}>
-                {/* Quantity Field */}
                 <div className="mb-4">
                   <label
                     htmlFor="quantity"
@@ -416,7 +412,6 @@ export default function BloodInventoryAdmin() {
             <Modal.Header>Create New Inventory Item</Modal.Header>
             <Modal.Body>
               <form onSubmit={handleNewInventorySubmit}>
-                {/* Blood Type ID Field */}
                 <div className="mb-4">
                   <label
                     htmlFor="bloodType"
@@ -445,7 +440,6 @@ export default function BloodInventoryAdmin() {
                   </select>
                 </div>
 
-                {/* Quantity Field */}
                 <div className="mb-4">
                   <label
                     htmlFor="quantity"
@@ -468,7 +462,6 @@ export default function BloodInventoryAdmin() {
                   />
                 </div>
 
-                {/* Province ID Field */}
                 <div className="mb-4">
                   <label
                     htmlFor="province"
