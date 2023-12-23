@@ -114,7 +114,7 @@ export default function AdminHelpOfferPage() {
     }));
   };
 
-  // Define a function to clear filters
+  
   const handleClearFilters = () => {
     setFilters({
       searchBy: "all",
@@ -130,7 +130,7 @@ export default function AdminHelpOfferPage() {
     console.log("Offer to delete:", offer);
     if (!offer.OfferID) {
       console.error("OfferID is missing in the selected offer");
-      // Handle this situation appropriately
+      
       return;
     }
     setOfferToDelete(offer);
@@ -146,7 +146,7 @@ export default function AdminHelpOfferPage() {
       const offerId = offerToDelete.OfferID;
       if (!offerId) {
         console.error("No OfferID found for deletion.");
-        // Additional handling here, such as setting an error message
+        
         return;
       }
 

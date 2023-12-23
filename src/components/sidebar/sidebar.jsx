@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 import logo from "../../../public/BD Logo Hitam.png";
 import { useNavigate } from "react-router-dom";
 
-// import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
-// import UserDropdown from "components/Dropdowns/UserDropdown.js";
-
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const [isLoggedIn, setIsLoggedIn] = useState(false);

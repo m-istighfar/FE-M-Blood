@@ -142,7 +142,7 @@ export default function AdminHostBloodDrive() {
       );
       setIsError(false);
       setShowToast(true);
-      fetchBloodDrives(); // Refresh the list
+      fetchBloodDrives();
       setIsDeleteConfirmationOpen(false);
     } catch (error) {
       console.error("Error deleting the blood drive:", error);
@@ -159,7 +159,7 @@ export default function AdminHostBloodDrive() {
   };
 
   const handleUpdateBloodDrive = async (e) => {
-    e.preventDefault(); // Prevent form from refreshing the page
+    e.preventDefault();
     try {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
@@ -185,7 +185,7 @@ export default function AdminHostBloodDrive() {
       );
       setIsError(false);
       setShowToast(true);
-      fetchBloodDrives(); // Refresh the list
+      fetchBloodDrives(); 
     } catch (error) {
       let errorMessage = "An error occurred while updating the blood drive.";
       if (error.response && error.response.data && error.response.data.error) {
@@ -195,7 +195,7 @@ export default function AdminHostBloodDrive() {
       setIsError(true);
       setShowToast(true);
     } finally {
-      setIsModalOpen(false); // Close the modal regardless of the outcome
+      setIsModalOpen(false);
     }
   };
 

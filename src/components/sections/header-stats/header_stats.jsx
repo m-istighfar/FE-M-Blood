@@ -2,8 +2,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 
-// import CardStats from "components/Cards/CardStats.js";
-
 export default function HeaderStats({
   heading = "Welcome to MBlood",
   subheading = "Admin Dashboard",

@@ -10,7 +10,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import DeleteConfirmationModal from "../../utils/modal";
 import formatStatus from "../../utils/format-status";
 import Filters from "../../sections/filterable/filterable-component";
-// import InitialDataFetching from "../../utility-functions/initial-data-fetching";
+
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -41,14 +41,14 @@ export default function AdminNeedBlood() {
 
   const [filters, setFilters] = useState({
     bloodType: "",
-    requestDate: "", // Renamed from scheduledDate
+    requestDate: "",
     location: "",
     status: "",
     searchBy: "all",
     query: "",
   });
 
-  // Fetch blood types on component mount
+  
   useEffect(() => {
     const fetchBloodTypes = async () => {
       try {
@@ -80,7 +80,7 @@ export default function AdminNeedBlood() {
         setShowToast(false);
       }, toastDuration);
 
-      // Cleanup the timer when the component is unmounted or the showToast changes
+      
       return () => clearTimeout(timer);
     }
   }, [showToast, toastDuration]);
@@ -186,7 +186,7 @@ export default function AdminNeedBlood() {
         setIsError(true);
       }
       setShowToast(true);
-      fetchRequests(); // Refresh the list after deletion
+      fetchRequests(); 
     } catch (error) {
       console.error("Error deleting the emergency request:", error);
       setToastMessage("Error occurred while deleting the emergency request.");
@@ -205,7 +205,7 @@ export default function AdminNeedBlood() {
   const handleUpdateClick = (request) => {
     setRequestToUpdate({
       ...request,
-      Status: "", // Gunakan string kosong atau nilai lain yang mengindikasikan tidak ada status yang dipilih
+      Status: "", 
     });
     setIsModalOpen(true);
   };
@@ -219,7 +219,7 @@ export default function AdminNeedBlood() {
   };
 
   const handleUpdateRequest = async (e) => {
-    e.preventDefault(); // Prevent form from refreshing the page
+    e.preventDefault(); 
 
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
@@ -227,7 +227,7 @@ export default function AdminNeedBlood() {
       setToastMessage("User is not authenticated.");
       setIsError(true);
       setShowToast(true);
-      setIsModalOpen(false); // Close the modal
+      setIsModalOpen(false); 
       return;
     }
 
@@ -242,7 +242,7 @@ export default function AdminNeedBlood() {
       setToastMessage("Invalid status value. Please select a valid status.");
       setIsError(true);
       setShowToast(true);
-      // Do not close the modal here to allow the user to correct the input
+      
       return;
     }
 
@@ -267,17 +267,17 @@ export default function AdminNeedBlood() {
       setToastMessage("Emergency request updated successfully");
       setIsError(false);
       setShowToast(true);
-      fetchRequests(); // Refresh the list
+      fetchRequests(); 
     } catch (error) {
       let errorMessage = "Error occurred while updating the emergency request.";
       if (error.response && error.response.data && error.response.data.error) {
-        errorMessage = error.response.data.error; // Gunakan pesan error dari server
+        errorMessage = error.response.data.error; 
       }
       setToastMessage(errorMessage);
       setIsError(true);
       setShowToast(true);
     } finally {
-      setIsModalOpen(false); // Close the modal
+      setIsModalOpen(false); 
     }
   };
 
@@ -344,7 +344,7 @@ export default function AdminNeedBlood() {
               onClose={() => setShowToast(false)}
               title={isError ? "Error" : "Success"}
               color={isError ? "failure" : "success"}
-              className="shadow-lg border-2 border-blue" // Custom styling
+              className="shadow-lg border-2 border-blue"
             >
               {toastMessage}
               <button onClick={() => setShowToast(false)} className="text-red">
@@ -355,7 +355,7 @@ export default function AdminNeedBlood() {
           )}
           <DisplayTableComponent
             tableHeader={tableHeader}
-            data={data} // Pass the entire dataset
+            data={data} 
             type={"donate-blood"}
             handleUpdateClick={handleUpdateClick}
             handleDelete={handleDelete}

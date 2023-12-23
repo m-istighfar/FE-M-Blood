@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import "./form-component-styles.scss"; // Ensure this path is correct for your styles
+import "./form-component-styles.scss";
 import WrapperSection from "../wrapper-section/wrapper-section-component";
 
 const FormComponent = ({
