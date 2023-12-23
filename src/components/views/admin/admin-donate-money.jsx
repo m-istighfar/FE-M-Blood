@@ -25,7 +25,7 @@ export default function AdminDonationPage() {
     const fetchDonations = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/?page=${currentPage}&limit=${limit}`
+          `${BASE_URL}/donation?page=${currentPage}&limit=${limit}`
         );
         setDonations(formatDonationsData(response.data.data.donations));
         setTotalPages(response.data.data.totalPages);

@@ -7,6 +7,7 @@ import ForgotPasswordPage from "./components/pages/auth/forgot-password/forgot-p
 import ResetPasswordConfirmationPage from "./components/pages/auth/reset-password-confirmation";
 import CreateNewPasswordPage from "./components/pages/auth/create-new-password/create-new-password";
 import NewPasswordSetConfirmationPage from "./components/pages/auth/new-password-set-confirmation";
+import EmailVerificationConfirmationPage from "./components/pages/auth/verify-email/verify-email";
 import DonateBloodPage from "./components/pages/donate-blood/donate-blood-page";
 import HostBloodDrivePage from "./components/pages/host-blood-drive/host-blood-drive";
 import NeedBloodPage from "./components/pages/need-blood/need-blood-page";
@@ -44,6 +45,10 @@ export default function App() {
         <Route
           path="/new-password-set-confirmation"
           element={<NewPasswordSetConfirmationPage />}
+        />
+        <Route
+          path="/verify-email/:token"
+          element={<EmailVerificationConfirmationPage />}
         />
 
         <Route exact path="/" element={<HomePage />} />

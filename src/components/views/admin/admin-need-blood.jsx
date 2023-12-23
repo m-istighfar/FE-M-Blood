@@ -325,7 +325,7 @@ export default function AdminNeedBlood() {
   ];
   return (
     <>
-      <HeaderStats heading="Blood Donating Users" />
+      <HeaderStats heading="Emergency Request Users" />
       <div className="bg-white p-10 m-10 -mt-20 rounded-rsm">
         <Filters
           bloodTypes={bloodTypes}
