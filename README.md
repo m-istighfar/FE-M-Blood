@@ -2,6 +2,11 @@
 
 Proyek ini, yang kami namakan 'Inovasi Digital dalam Donor Darah', adalah sebuah inisiatif untuk mengintegrasikan teknologi digital dalam proses donor darah.
 
+## Live Demo
+
+ [Netlify](https://tubular-pothos-13218a.netlify.app)
+ [Vercel] (https://fe-final-project-revou.vercel.app/)
+
 ## Tentang Website
 
 Di era digital saat ini, penting bagi layanan donor darah untuk memanfaatkan teknologi untuk meningkatkan efisiensi dan keterjangkauan. Inisiatif ini bertujuan untuk mengatasi tantangan dalam sistem donor darah tradisional seperti kesulitan dalam menemukan donor yang cocok, memantau stok darah, dan menyediakan platform yang aman dan terpercaya bagi para donor.
