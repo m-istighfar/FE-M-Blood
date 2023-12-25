@@ -13,6 +13,8 @@ import ContactDetailsComponent from "../../sections/details/details-component";
 import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const ContactPage = () => {
   const [bloodTypes, setBloodTypes] = useState([]);
 
@@ -40,7 +42,7 @@ const ContactPage = () => {
 
   const fetchBloodTypes = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/blood-type");
+      const response = await axios.get(`${BASE_URL}/blood-type`);
       setBloodTypes(response.data.data);
     } catch (error) {
       console.error("Error fetching blood types:", error);
@@ -49,7 +51,7 @@ const ContactPage = () => {
 
   const fetchProvinces = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/province");
+      const response = await axios.get(`${BASE_URL}/province`);
       setProvinces(response.data.data);
     } catch (error) {
       console.error("Error fetching provinces:", error);
@@ -73,11 +75,9 @@ const ContactPage = () => {
 
   const submitHelpOffer = async (data) => {
     const accessToken = localStorage.getItem("accessToken");
-    const response = await axios.post(
-      "http://localhost:3000/help-offer/offer",
-      data,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
-    );
+    const response = await axios.post(`${BASE_URL}/help-offer/offer`, data, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
     console.log("Help offer created successfully:", response.data);
     reset();
     showModal(
