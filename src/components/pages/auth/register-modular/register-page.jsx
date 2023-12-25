@@ -169,9 +169,7 @@ const RegisterPage = () => {
                           {({ active }) => (
                             <li
                               className={`${
-                                active
-                                  ? "bg-blue text-white"
-                                  : "text-gray-900"
+                                active ? "bg-blue text-white" : "text-gray-900"
                               } cursor-pointer select-none relative px-4 py-2`}
                             >
                               {province.Name}

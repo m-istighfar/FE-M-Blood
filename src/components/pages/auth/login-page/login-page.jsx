@@ -128,7 +128,7 @@ const LoginPage = () => {
 
         <div className="hidden lg:block lg:w-1/2">
           <img
-            src="src/assets/images/bd5.jpg"
+            src="../../../../assets/images/bd5.jpg"
             alt="Blood Donation"
             className="object-cover w-full h-full"
           />

@@ -206,7 +206,7 @@ const RegisterPage = () => {
 
         <div className="hidden lg:block lg:w-1/2">
           <img
-            src="src/assets/images/bd5.jpg"
+            src="../../../../assets/images/bd5.jpg"
             alt="Join our community"
             className="object-cover w-full h-full"
           />
