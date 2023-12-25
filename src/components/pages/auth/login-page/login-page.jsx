@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Dialog } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
 import "tailwindcss/tailwind.css";
+import bd5Image from "../../../../assets/images/bd5.jpg";
 
 import { loginUser } from "../api";
 
@@ -128,7 +129,7 @@ const LoginPage = () => {
 
         <div className="hidden lg:block lg:w-1/2">
           <img
-            src="../../../../assets/images/bd5.jpg"
+            src={bd5Image}
             alt="Blood Donation"
             className="object-cover w-full h-full"
           />

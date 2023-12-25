@@ -3,6 +3,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { Dialog, Listbox } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
+import bd5Image from "../../../assets/images/bd5.jpg";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -206,7 +207,7 @@ const RegisterPage = () => {
 
         <div className="hidden lg:block lg:w-1/2">
           <img
-            src="../../../../assets/images/bd5.jpg"
+            src={bd5Image}
             alt="Join our community"
             className="object-cover w-full h-full"
           />
