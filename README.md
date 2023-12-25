@@ -1,6 +1,6 @@
 # Website Donor Darah MBlood
 
-Proyek ini, yang kami namakan 'Inovasi Digital dalam Donor Darah', adalah sebuah inisiatif untuk mengintegrasikan teknologi digital dalam proses donor darah.
+Proyek ini, yang kami namakan 'Inovasi Digital dalam Donor Darah', adalah sebuah inisiatif untuk mengintegrasikan teknologi digital dalam proses donor darah..
 
 ## Live Demo
 
